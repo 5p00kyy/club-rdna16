@@ -237,7 +237,7 @@ def write_report(path, result_json_path, results):
             "- Launch command/config (sanitized):",
             "- Context length:",
             "- KV cache:",
-        "- GPU layers / split mode:",
+            "- GPU layers / split mode:",
             "- MTP/speculative settings:",
             "- Thinking/reasoning enabled:",
             "- Notes/warnings:",

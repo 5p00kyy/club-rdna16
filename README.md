@@ -30,16 +30,16 @@ Seed hardware:
 - ROCm packages observed locally: 7.2.x family
 - Current models: Unsloth Qwen3.6 27B MTP GGUF and Qwen3.6 35B-A3B MTP GGUF, both `UD-IQ3_XXS`
 
-Important first finding: the current `~/Llama/presets.ini` all-GPU `q8_0` KV profile is conservative for 35B-A3B at 131k context without MTP, but too optimistic at 204k context. At 204k, use lower KV precision or accept CPU MoE offload and benchmark the speed hit honestly. MTP adds memory pressure: the first 35B-A3B `131k/q8` MTP load failed while allocating the extra draft context.
+Important first finding: keep q8 KV as the default target on this card. The best current seed path is Qwen3.6 35B-A3B with q8 KV: 131k no-MTP for stable long prompts, or 100k MTP when native draft-MTP speed is wanted.
 
 ## Recommended First Profiles
 
 | Model | Purpose | Context | KV cache | Notes |
 | --- | --- | ---: | --- | --- |
-| Qwen3.6 35B-A3B `UD-IQ3_XXS` | daily MoE route | 131072 | `q8_0` | No-MTP cold 300k-character needle passed. |
-| Qwen3.6 35B-A3B `UD-IQ3_XXS` | long-context route | 204800 | `q4_0` | No-MTP cold 500k-character needle passed. |
-| Qwen3.6 27B `UD-IQ3_XXS` | daily route | 102400 | `q8_0` | Good first daily target. |
-| Qwen3.6 27B `UD-IQ3_XXS` | long-context route | 131072 | `q5_1` or `q4_0` | Needs real long-prompt validation before promotion. |
+| Qwen3.6 35B-A3B `UD-IQ3_XXS` | stable q8 route | 131072 | `q8_0` | No-MTP cold 300k-character needle passed. |
+| Qwen3.6 35B-A3B `UD-IQ3_XXS` | MTP q8 route | 102400 | `q8_0` | MTP cold 300k-character needle passed with `parallel=1`, `b512/ub256`. |
+| Qwen3.6 35B-A3B `UD-IQ3_XXS` | short-prompt MTP q8 | 131072 | `q8_0` | Short prompts pass; long prefill OOMs, so do not promote for long-context use. |
+| Qwen3.6 27B `UD-IQ3_XXS` | short-prompt MTP q8 | 65536-102400 | `q8_0` | Loads and runs, but observed decode is slower than 35B-A3B and long-context testing is not promoted. |
 
 For MTP GGUF models, enable llama.cpp native MTP explicitly:
 
@@ -47,7 +47,7 @@ For MTP GGUF models, enable llama.cpp native MTP explicitly:
 --spec-type draft-mtp --spec-draft-n-max 3 --spec-draft-p-min 0.75
 ```
 
-Do not claim MTP speedup unless logs or benchmark output show that speculation initialized and was active.
+Also set `parallel = 1` for 16GB Radeon MTP tests. Router-child defaults can otherwise start with four slots and blow VRAM. Do not claim MTP speedup unless logs or benchmark output show that speculation initialized and was active.
 
 ## Results And Data
 
