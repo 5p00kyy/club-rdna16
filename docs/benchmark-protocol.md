@@ -45,7 +45,9 @@ For 16GB AMD cards, run MTP with `parallel=1` first. Compare `--spec-draft-n-max
 
 ## Backend And Batch Sweeps
 
-The initial seed data is ROCm/HIP because that is the tested RX 6900 XT stack. Community reports justify adding a future ROCm/HIP vs Vulkan comparison, but backend results must use the same model, quant, KV cache, prompts, context depth, and power profile.
+Backend is a first-class benchmark axis. Keep ROCm/HIP and Vulkan rows separate, and do not compare them without matching the model, quant, KV cache, prompts, context depth, generated-token target, and power profile.
+
+The RX 6900 XT seed data currently includes ROCm/HIP rows under `COMPUTE` and `3D_FULL_SCREEN`, plus an exploratory Vulkan `3D_FULL_SCREEN` lane. A fair backend comparison still needs matched Vulkan `COMPUTE` rows.
 
 When tuning batch settings, sweep instead of guessing:
 

@@ -7,10 +7,10 @@ These notes summarize public community signals that shaped the initial `club-rdn
 ## Main Takeaways
 
 - Keep `q8_0` KV as the public recommendation floor for this repo unless a lower-KV experiment is explicitly marked exploratory. Community posts often use lower KV to make context fit, but the initial `club-rdna16` target is q8-first quality.
-- Benchmark MTP by workload and draft depth. Multiple LocalLLaMA reports show MTP can help coding or predictable outputs, but can lose or flatten out on creative/free-form prompts. This matches our seed data: 35B-A3B MTP is useful at `100k/q8`, while 27B MTP was not competitive on the RX 6900 XT seed machine.
+- Benchmark MTP by workload and draft depth. Multiple LocalLLaMA reports show MTP can help coding or predictable outputs, but can lose or flatten out on creative/free-form prompts. This matches our seed data: 35B-A3B MTP is useful at `100k/q8`, while the 27B dense-model lane needs broader long-context and thinking-on coverage before drawing stronger guidance.
 - Sweep `--spec-draft-n-max` rather than assuming bigger is faster. The RX 6800 XT MTP thread had a concrete case where reducing draft depth from 6 to 2 or 3 fixed a slowdown.
 - Record flash attention and build flags. RX 9070 reports repeatedly point to flash attention and HIP build flags as the difference between poor and useful ROCm behavior.
-- Treat ROCm vs Vulkan as a real axis for future work. RX 6900 XT and RX 7800 XT posts report Vulkan often winning token generation, while ROCm can win prompt processing or become better with newer builds. `club-rdna16` starts with ROCm/HIP because that is the local seed stack, but public submissions should be able to report backend.
+- Treat ROCm/HIP vs Vulkan as a real axis. RX 6900 XT and RX 7800 XT posts report Vulkan often winning token generation, while ROCm can win prompt processing or become better with newer builds. `club-rdna16` now has both ROCm/HIP and exploratory Vulkan seed rows, and public submissions should always report backend.
 - Measure non-empty context. Several community benchmarks are short `llama-bench` rows or low-context chat tests. For local-agent use, this repo should prefer short prompt, medium-context, and cold long-retrieval receipts.
 
 ## Sources Reviewed

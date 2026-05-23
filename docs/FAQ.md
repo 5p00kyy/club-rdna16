@@ -10,7 +10,7 @@ No. It has the same VRAM class and higher memory bandwidth, but ROCm support, ar
 
 ## Should I use ROCm/HIP or Vulkan?
 
-The seed path is ROCm/HIP for llama.cpp. Vulkan results are welcome, but report them as separate backend results.
+Both are valid backend lanes for this repo. Current RX 6900 XT seed data includes ROCm/HIP and Vulkan, but the rows differ by power profile, so compare only matched backend/power/profile runs.
 
 ## Are fit checks enough?
 

@@ -2,7 +2,7 @@
 
 Practical llama.cpp presets, tests, and benchmark receipts for 16GB AMD Radeon GPUs.
 
-The first target is a single RX 6900 XT 16GB using ROCm/HIP on Linux. The comparison target is RX 9070 XT 16GB: same VRAM class, newer RDNA generation, higher memory bandwidth, and likely better speed when the ROCm stack supports the card cleanly.
+The first target is a single RX 6900 XT 16GB on Linux, with results split by backend instead of collapsed into one AMD lane. Current seed data includes llama.cpp ROCm/HIP and an exploratory llama.cpp Vulkan pass. The comparison target is RX 9070 XT 16GB: same VRAM class, newer RDNA generation, higher memory bandwidth, and a backend stack that needs to be measured rather than assumed.
 
 This is not a synthetic leaderboard. A result is only useful when it includes enough context for someone else to reproduce the launch shape, understand the caveats, and decide whether the profile is stable enough for daily local inference.
 
@@ -27,11 +27,12 @@ Seed hardware:
 - VRAM: 16GB GDDR6, 256-bit, up to 512 GB/s memory bandwidth according to AMD
 - Host: i9-10900K, 64GB DDR4-3200
 - OS: Arch Linux / Hyprland desktop
-- Runtime: upstream llama.cpp HIP build
+- Runtime: upstream llama.cpp HIP build plus a sidecar Vulkan build from the same llama.cpp commit
 - ROCm packages observed locally: 7.2.x family
+- Vulkan stack observed locally: RADV / Mesa 26.2.0-devel
 - Current models: Unsloth Qwen3.6 27B MTP GGUF and Qwen3.6 35B-A3B MTP GGUF, both `UD-IQ3_XXS`
 
-Important first finding: keep q8 KV as the default target on this card. The best current seed path is Qwen3.6 35B-A3B with q8 KV under the AMD `COMPUTE` power profile: 131k no-MTP for stable long prompts, or 100k MTP when native draft-MTP speed is wanted.
+Important first finding: keep q8 KV as the default target on this card. The current seed data has separate evidence for ROCm/HIP under `COMPUTE` and `3D_FULL_SCREEN`, plus Vulkan under `3D_FULL_SCREEN`. Backend and power-profile rows should be compared as separate lanes.
 
 ## Recommended First Profiles
 
@@ -39,8 +40,9 @@ Important first finding: keep q8 KV as the default target on this card. The best
 | --- | --- | ---: | --- | --- |
 | Qwen3.6 35B-A3B `UD-IQ3_XXS` | stable q8 route | 131072 | `q8_0` | No-MTP cold 300k-character needle passed; compute profile gave the best long-prefill result. |
 | Qwen3.6 35B-A3B `UD-IQ3_XXS` | MTP q8 route | 102400 | `q8_0` | MTP cold 300k-character needle passed with `parallel=1`, `b512/ub256`; compute profile improved long-prefill speed. |
+| Qwen3.6 35B-A3B `UD-IQ3_XXS` | Vulkan MTP q8 route | 102400 | `q8_0` | Vulkan 3D_FULL_SCREEN pass loaded and passed a cold 300k-character needle; repeat under `COMPUTE` before treating it as a replacement for HIP guidance. |
 | Qwen3.6 35B-A3B `UD-IQ3_XXS` | short-prompt MTP q8 | 131072 | `q8_0` | Short prompts pass; long prefill OOMs, so do not promote for long-context use. |
-| Qwen3.6 27B `UD-IQ3_XXS` | short-prompt MTP q8 | 65536-102400 | `q8_0` | Loads and runs, but observed decode is slower than 35B-A3B and long-context testing is not promoted. |
+| Qwen3.6 27B `UD-IQ3_XXS` | dense-model q8 route | 65536-102400 | `q8_0` | Loads and runs as a dense 27B lane; current seed rows are short-prompt evidence, with long-context and thinking-on coverage still to add. |
 
 For MTP GGUF models, enable llama.cpp native MTP explicitly:
 
@@ -95,7 +97,7 @@ bash scripts/report.sh --url http://127.0.0.1:8088 --model Qwen3.6-35B-A3B
 - `docs/gpu-power-profiles.md` - LACT/amdgpu profile checks and compute-mode comparison plan
 - `docs/local-llama-research.md` - LocalLLaMA and official-reference research notes
 - `docs/fit-matrix.md` - first fit-probe findings
-- `docs/troubleshooting.md` - ROCm/llama.cpp failure notes
+- `docs/troubleshooting.md` - AMD backend and llama.cpp failure notes
 - `docs/reporting-results.md` - community submission rules
 - `examples/` - sanitized llama.cpp preset snippets
 - `scripts/` - validation, reporting, build, and benchmark helpers

@@ -14,9 +14,9 @@ These are candidate profiles for RX 6900 XT / 16GB Radeon testing. Treat fit gui
 
 | Profile | Context | KV cache | Expected status | Notes |
 | --- | ---: | --- | --- | --- |
-| MTP q8 short | 65536 | `q8_0` | runtime validated for short prompts | Loads with MTP but decode is only around 31-34 tok/s in seed tests. |
-| MTP q8 short | 102400 | `q8_0` | runtime validated for short prompts | Loads with `b256/ub128`; 300k-character long prompt failed, and 64k long prefill was too slow to promote. |
-| no-MTP q8 | 102400 | `q8_0` | still needs q8-only long validation | Prefer this over dropping KV precision if 27B is needed. |
+| MTP q8 short | 65536 | `q8_0` | runtime validated for short prompts | Dense 27B lane that loads cleanly with q8 KV and MTP; current seed coverage is short-prompt only. |
+| MTP q8 short | 102400 | `q8_0` | runtime validated for short prompts | Loads with `b256/ub128`; needs more long-context and thinking-on coverage before stronger guidance. |
+| no-MTP q8 | 102400 | `q8_0` | still needs q8-only long validation | Useful dense-model fallback to validate before dropping KV precision. |
 
 ## Suggested Common Flags For No-MTP Baseline
 
@@ -42,7 +42,7 @@ Current MTP guidance:
 
 - Promote 35B-A3B `102400/q8_0`, `parallel=1`, `b512/ub256` when MTP is wanted.
 - Treat 35B-A3B `131072/q8_0`, `parallel=1`, `b256/ub128` as short-prompt only until long-prefill OOM is solved.
-- Do not promote 27B MTP yet; q8 loads, but speed and long-context behavior are not competitive in the seed tests.
+- Keep 27B MTP as a valid dense-model lane, with current guidance limited by coverage rather than by model quality. Add long-context and thinking-on rows before recommending a specific 27B profile.
 - For public recommendations, keep KV at `q8_0` unless a result is explicitly marked exploratory. Lower-KV context-stretching is useful research, but it is not the first `club-rdna16` quality target.
 - Sweep `--spec-draft-n-max 2` and `3` for future MTP submissions. Community reports show too much draft depth can slow AMD runs down.
 

@@ -2,7 +2,7 @@
 
 Seed RX 6900 XT benchmark JSON is checked in under `data/results/`. Long-context needle receipts are under `data/long-context/`.
 
-The current evidence is:
+The current evidence is split by backend and power profile. Treat ROCm/HIP, Vulkan, `COMPUTE`, and `3D_FULL_SCREEN` rows as separate lanes.
 
 ## Current Seed Results
 
@@ -38,14 +38,25 @@ These rows were collected after switching amdgpu `pp_power_profile_mode` to `COM
 | 27B `64k/q8` MTP `b512/ub256` | short-chat | 256 generated | 34.09 decode tok/s |
 | 27B `100k/q8` MTP `b256/ub128` | short-chat | 256 generated | 33.94 decode tok/s |
 
+### RX 6900 XT Vulkan `3D_FULL_SCREEN`
+
+These rows used a sidecar llama.cpp Vulkan build from the same source commit as the HIP build. They are useful evidence that the current Vulkan backend can run the Qwen3.6 hybrid/MTP path on this RX 6900 XT, but they should be repeated under `COMPUTE` before replacing HIP guidance.
+
+| profile | prompt | tokens | result |
+| --- | --- | ---: | --- |
+| 35B-A3B `100k/q8` MTP Vulkan | short-chat | 256 generated | 112.91 decode tok/s |
+| 35B-A3B `100k/q8` MTP Vulkan | agent-tool | 512 generated | 111.85 decode tok/s |
+| 35B-A3B `100k/q8` MTP Vulkan | cold 300k-character needle | 70,998 prompt | passed, 122.4s wall, 581.6 prompt tok/s |
+
 ## Caveats
 
 - Matched rows exist for LACT/amdgpu `3D_FULL_SCREEN` and sysfs `COMPUTE`; do not mix them in comparisons.
+- Vulkan rows currently exist only for `3D_FULL_SCREEN`; repeat under `COMPUTE` before making backend-level recommendations.
 - Compute-mode reruns need local sudo or a LACT profile change on the desktop. An SSH key alone may not be able to switch `pp_power_profile_mode` if sudo requires interactive authentication.
 - Q8 KV is the preferred public target. Q4 KV was explored as a fit fallback and then removed from promoted result data.
 - MTP needs `parallel=1` on this RX 6900 XT. Without it, router child processes can start with four slots and produce false OOMs.
 - 35B-A3B `131k/q8` MTP is short-prompt stable but failed a 300k-character long prompt during prefill.
-- 27B q8 MTP loads, but seed short-prompt speed is materially worse than 35B-A3B and long-context behavior is not promoted.
+- 27B q8 MTP rows are valid dense-model evidence, but current seed coverage is short-prompt only. Add long-context and thinking-on rows before making stronger 27B profile guidance.
 - Short-prompt decode speed is not a long-context decode guarantee.
 
 Once result JSON exists under `data/results/`, run:
