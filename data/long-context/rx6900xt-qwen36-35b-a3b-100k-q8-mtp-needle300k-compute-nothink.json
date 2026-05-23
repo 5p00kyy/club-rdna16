@@ -1,0 +1,15 @@
+{
+  "schema": "club-rdna16.long-context-needle.v1",
+  "timestamp_utc": "2026-05-23T01:58:06.183803+00:00",
+  "model": "Qwen3.6-35B-A3B-rdna16-100k-q8kv-mtp",
+  "target_chars": 300000,
+  "prompt_tokens": 71011,
+  "completion_tokens": 31,
+  "wall_seconds": 108.344,
+  "prompt_tok_s": 675.4321644428259,
+  "decode_tok_s": 40.683001985592966,
+  "needle": "CLUB-RDNA16-COMPUTE-MTP-35B-100Q8-20260523",
+  "salt": "compute35b100q8mtp-20260523",
+  "answer": "CLUB-RDNA16-COMPUTE-MTP-35B-100Q8-20260523",
+  "passed": true
+}

@@ -7,5 +7,5 @@ __pycache__/
 *.jsonl
 bench-out/
 results-local/
+artifacts/
 .DS_Store
-

@@ -14,7 +14,13 @@ Observed through LACT and amdgpu sysfs:
 - Active sysfs profile: `3D_FULL_SCREEN`
 - Available relevant sysfs profile: `COMPUTE` at index `5`
 
-The seed results currently use `3D_FULL_SCREEN`, not `COMPUTE`.
+The first seed results used `3D_FULL_SCREEN`. Matched q8 reruns were later collected under `COMPUTE` after manually switching sysfs:
+
+```bash
+sudo bash -lc 'GPU=/sys/class/drm/card1/device; echo manual > "$GPU/power_dpm_force_performance_level"; echo 5 > "$GPU/pp_power_profile_mode"'
+```
+
+The compute rows are now the preferred RX 6900 XT baseline for serious llama.cpp/HIP testing. Keep the 3D rows as comparison data because many desktop systems will default to a graphics-oriented profile under LACT.
 
 ## Why It Matters
 
@@ -40,7 +46,7 @@ lact cli profile get
 lact cli profile set "Profile Name"
 ```
 
-On this desktop only the `Default` LACT profile currently exists, so direct sysfs is the clearer temporary benchmark control if Pacey wants a compute-mode comparison:
+On the seed desktop only the `Default` LACT profile currently exists, so direct sysfs is the clearer temporary benchmark control for compute-mode comparison:
 
 ```bash
 sudo sh -c 'echo manual > /sys/class/drm/card1/device/power_dpm_force_performance_level'

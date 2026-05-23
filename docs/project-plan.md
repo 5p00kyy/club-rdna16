@@ -22,7 +22,7 @@
 2. RX 6900 XT fit matrix: Qwen3.6 27B and 35B-A3B across context and KV cache settings.
 3. RX 6900 XT runtime matrix: short-chat, code-generate, agent-tool, and long-retrieval prompts on candidate profiles.
 4. Public readiness pass: scrub private paths/hosts, validate data, build site data, review README and issue templates.
-5. RX 9070 XT intake: document expected ROCm target, collect Jaime's stack report, then run the same matrix.
+5. RX 9070 XT intake: document expected ROCm target, collect a contributor stack report, then run the same matrix.
 
 ## Public Checklist
 
