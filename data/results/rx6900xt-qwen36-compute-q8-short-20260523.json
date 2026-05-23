@@ -45,7 +45,6 @@
           "notes": "No-MTP profile has no spec-type in preset."
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV only; parallel=1; batch/ubatch reduced for MTP profiles where needed."
       },
       "benchmark": {
@@ -113,7 +112,6 @@
           "notes": "No-MTP profile has no spec-type in preset."
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV only; parallel=1; batch/ubatch reduced for MTP profiles where needed."
       },
       "benchmark": {
@@ -182,7 +180,6 @@
           "notes": "MTP profiles use native llama.cpp draft-mtp; no-MTP profile has no spec-type in preset."
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV only; parallel=1; batch/ubatch reduced for MTP profiles where needed."
       },
       "benchmark": {
@@ -251,7 +248,6 @@
           "notes": "MTP profiles use native llama.cpp draft-mtp; no-MTP profile has no spec-type in preset."
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV only; parallel=1; batch/ubatch reduced for MTP profiles where needed."
       },
       "benchmark": {
@@ -320,7 +316,6 @@
           "notes": "MTP profiles use native llama.cpp draft-mtp; no-MTP profile has no spec-type in preset."
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV only; parallel=1; batch/ubatch reduced for MTP profiles where needed."
       },
       "benchmark": {
@@ -389,7 +384,6 @@
           "notes": "MTP profiles use native llama.cpp draft-mtp; no-MTP profile has no spec-type in preset."
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV only; parallel=1; batch/ubatch reduced for MTP profiles where needed."
       },
       "benchmark": {
@@ -458,7 +452,6 @@
           "notes": "MTP profiles use native llama.cpp draft-mtp; no-MTP profile has no spec-type in preset."
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV only; parallel=1; batch/ubatch reduced for MTP profiles where needed."
       },
       "benchmark": {
@@ -527,7 +520,6 @@
           "notes": "MTP profiles use native llama.cpp draft-mtp; no-MTP profile has no spec-type in preset."
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV only; parallel=1; batch/ubatch reduced for MTP profiles where needed."
       },
       "benchmark": {
@@ -596,7 +588,6 @@
           "notes": "MTP profiles use native llama.cpp draft-mtp; no-MTP profile has no spec-type in preset."
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV only; parallel=1; batch/ubatch reduced for MTP profiles where needed."
       },
       "benchmark": {
@@ -665,7 +656,6 @@
           "notes": "MTP profiles use native llama.cpp draft-mtp; no-MTP profile has no spec-type in preset."
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV only; parallel=1; batch/ubatch reduced for MTP profiles where needed."
       },
       "benchmark": {

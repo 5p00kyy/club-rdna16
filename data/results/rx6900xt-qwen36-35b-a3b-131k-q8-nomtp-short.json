@@ -38,8 +38,7 @@
         "speculation": {
           "type": "none"
         },
-        "thinking": "off",
-        "reasoning_budget": 8192
+        "thinking": "off"
       },
       "benchmark": {
         "prompt_set": "short-chat",
@@ -96,8 +95,7 @@
         "speculation": {
           "type": "none"
         },
-        "thinking": "off",
-        "reasoning_budget": 8192
+        "thinking": "off"
       },
       "benchmark": {
         "prompt_set": "agent-tool",

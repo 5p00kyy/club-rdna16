@@ -24,7 +24,7 @@
         "engine": "llama.cpp",
         "version": "llama.cpp 9293",
         "commit": "1acee6bf8",
-        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN; non-interactive compute-mode switch was unavailable."
+        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN. Compute-profile results are reported separately."
       },
       "model": {
         "id": "Qwen3.6-27B-rdna16-64k-q8kv-mtp-b512",
@@ -46,7 +46,6 @@
           "notes": "native llama.cpp draft-mtp; load logs show speculative decoding context initialized"
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV preferred; parallel=1; batch/ubatch reduced per context to fit MTP on RX 6900 XT"
       },
       "benchmark": {
@@ -66,7 +65,7 @@
         "wall_seconds": 7.745
       },
       "caveats": [
-        "Not a compute-mode result; non-interactive sudo was unavailable for changing LACT/sysfs power profile."
+        "3D_FULL_SCREEN power-profile result; compare separately from COMPUTE power-profile rows."
       ]
     },
     {
@@ -93,7 +92,7 @@
         "engine": "llama.cpp",
         "version": "llama.cpp 9293",
         "commit": "1acee6bf8",
-        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN; non-interactive compute-mode switch was unavailable."
+        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN. Compute-profile results are reported separately."
       },
       "model": {
         "id": "Qwen3.6-27B-rdna16-64k-q8kv-mtp-b512",
@@ -115,7 +114,6 @@
           "notes": "native llama.cpp draft-mtp; load logs show speculative decoding context initialized"
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV preferred; parallel=1; batch/ubatch reduced per context to fit MTP on RX 6900 XT"
       },
       "benchmark": {
@@ -135,7 +133,7 @@
         "wall_seconds": 16.543
       },
       "caveats": [
-        "Not a compute-mode result; non-interactive sudo was unavailable for changing LACT/sysfs power profile."
+        "3D_FULL_SCREEN power-profile result; compare separately from COMPUTE power-profile rows."
       ]
     },
     {
@@ -162,7 +160,7 @@
         "engine": "llama.cpp",
         "version": "llama.cpp 9293",
         "commit": "1acee6bf8",
-        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN; non-interactive compute-mode switch was unavailable."
+        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN. Compute-profile results are reported separately."
       },
       "model": {
         "id": "Qwen3.6-27B-rdna16-100k-q8kv-mtp-b256",
@@ -184,7 +182,6 @@
           "notes": "native llama.cpp draft-mtp; load logs show speculative decoding context initialized"
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV preferred; parallel=1; batch/ubatch reduced per context to fit MTP on RX 6900 XT"
       },
       "benchmark": {
@@ -204,7 +201,7 @@
         "wall_seconds": 7.779
       },
       "caveats": [
-        "Not a compute-mode result; non-interactive sudo was unavailable for changing LACT/sysfs power profile."
+        "3D_FULL_SCREEN power-profile result; compare separately from COMPUTE power-profile rows."
       ]
     },
     {
@@ -231,7 +228,7 @@
         "engine": "llama.cpp",
         "version": "llama.cpp 9293",
         "commit": "1acee6bf8",
-        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN; non-interactive compute-mode switch was unavailable."
+        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN. Compute-profile results are reported separately."
       },
       "model": {
         "id": "Qwen3.6-27B-rdna16-100k-q8kv-mtp-b256",
@@ -253,7 +250,6 @@
           "notes": "native llama.cpp draft-mtp; load logs show speculative decoding context initialized"
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV preferred; parallel=1; batch/ubatch reduced per context to fit MTP on RX 6900 XT"
       },
       "benchmark": {
@@ -273,7 +269,7 @@
         "wall_seconds": 16.639
       },
       "caveats": [
-        "Not a compute-mode result; non-interactive sudo was unavailable for changing LACT/sysfs power profile."
+        "3D_FULL_SCREEN power-profile result; compare separately from COMPUTE power-profile rows."
       ]
     },
     {
@@ -300,7 +296,7 @@
         "engine": "llama.cpp",
         "version": "llama.cpp 9293",
         "commit": "1acee6bf8",
-        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN; non-interactive compute-mode switch was unavailable."
+        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN. Compute-profile results are reported separately."
       },
       "model": {
         "id": "Qwen3.6-35B-A3B-rdna16-100k-q8kv-mtp-b512",
@@ -322,7 +318,6 @@
           "notes": "native llama.cpp draft-mtp; load logs show speculative decoding context initialized"
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV preferred; parallel=1; batch/ubatch reduced per context to fit MTP on RX 6900 XT"
       },
       "benchmark": {
@@ -342,7 +337,7 @@
         "wall_seconds": 3.327
       },
       "caveats": [
-        "Not a compute-mode result; non-interactive sudo was unavailable for changing LACT/sysfs power profile."
+        "3D_FULL_SCREEN power-profile result; compare separately from COMPUTE power-profile rows."
       ]
     },
     {
@@ -369,7 +364,7 @@
         "engine": "llama.cpp",
         "version": "llama.cpp 9293",
         "commit": "1acee6bf8",
-        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN; non-interactive compute-mode switch was unavailable."
+        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN. Compute-profile results are reported separately."
       },
       "model": {
         "id": "Qwen3.6-35B-A3B-rdna16-100k-q8kv-mtp-b512",
@@ -391,7 +386,6 @@
           "notes": "native llama.cpp draft-mtp; load logs show speculative decoding context initialized"
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV preferred; parallel=1; batch/ubatch reduced per context to fit MTP on RX 6900 XT"
       },
       "benchmark": {
@@ -411,7 +405,7 @@
         "wall_seconds": 7.469
       },
       "caveats": [
-        "Not a compute-mode result; non-interactive sudo was unavailable for changing LACT/sysfs power profile."
+        "3D_FULL_SCREEN power-profile result; compare separately from COMPUTE power-profile rows."
       ]
     },
     {
@@ -438,7 +432,7 @@
         "engine": "llama.cpp",
         "version": "llama.cpp 9293",
         "commit": "1acee6bf8",
-        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN; non-interactive compute-mode switch was unavailable."
+        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN. Compute-profile results are reported separately."
       },
       "model": {
         "id": "Qwen3.6-35B-A3B-rdna16-131k-q8kv-mtp-b256",
@@ -460,7 +454,6 @@
           "notes": "native llama.cpp draft-mtp; load logs show speculative decoding context initialized"
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV preferred; parallel=1; batch/ubatch reduced per context to fit MTP on RX 6900 XT"
       },
       "benchmark": {
@@ -480,7 +473,7 @@
         "wall_seconds": 3.234
       },
       "caveats": [
-        "Not a compute-mode result; non-interactive sudo was unavailable for changing LACT/sysfs power profile."
+        "3D_FULL_SCREEN power-profile result; compare separately from COMPUTE power-profile rows."
       ]
     },
     {
@@ -507,7 +500,7 @@
         "engine": "llama.cpp",
         "version": "llama.cpp 9293",
         "commit": "1acee6bf8",
-        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN; non-interactive compute-mode switch was unavailable."
+        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN. Compute-profile results are reported separately."
       },
       "model": {
         "id": "Qwen3.6-35B-A3B-rdna16-131k-q8kv-mtp-b256",
@@ -529,7 +522,6 @@
           "notes": "native llama.cpp draft-mtp; load logs show speculative decoding context initialized"
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV preferred; parallel=1; batch/ubatch reduced per context to fit MTP on RX 6900 XT"
       },
       "benchmark": {
@@ -549,7 +541,7 @@
         "wall_seconds": 7.309
       },
       "caveats": [
-        "Not a compute-mode result; non-interactive sudo was unavailable for changing LACT/sysfs power profile."
+        "3D_FULL_SCREEN power-profile result; compare separately from COMPUTE power-profile rows."
       ]
     }
   ]

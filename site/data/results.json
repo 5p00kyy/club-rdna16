@@ -38,8 +38,7 @@
         "speculation": {
           "type": "none"
         },
-        "thinking": "off",
-        "reasoning_budget": 8192
+        "thinking": "off"
       },
       "benchmark": {
         "prompt_set": "short-chat",
@@ -97,8 +96,7 @@
         "speculation": {
           "type": "none"
         },
-        "thinking": "off",
-        "reasoning_budget": 8192
+        "thinking": "off"
       },
       "benchmark": {
         "prompt_set": "agent-tool",
@@ -163,7 +161,6 @@
           "notes": "No-MTP profile has no spec-type in preset."
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV only; parallel=1; batch/ubatch reduced for MTP profiles where needed."
       },
       "benchmark": {
@@ -232,7 +229,6 @@
           "notes": "No-MTP profile has no spec-type in preset."
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV only; parallel=1; batch/ubatch reduced for MTP profiles where needed."
       },
       "benchmark": {
@@ -302,7 +298,6 @@
           "notes": "MTP profiles use native llama.cpp draft-mtp; no-MTP profile has no spec-type in preset."
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV only; parallel=1; batch/ubatch reduced for MTP profiles where needed."
       },
       "benchmark": {
@@ -372,7 +367,6 @@
           "notes": "MTP profiles use native llama.cpp draft-mtp; no-MTP profile has no spec-type in preset."
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV only; parallel=1; batch/ubatch reduced for MTP profiles where needed."
       },
       "benchmark": {
@@ -442,7 +436,6 @@
           "notes": "MTP profiles use native llama.cpp draft-mtp; no-MTP profile has no spec-type in preset."
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV only; parallel=1; batch/ubatch reduced for MTP profiles where needed."
       },
       "benchmark": {
@@ -512,7 +505,6 @@
           "notes": "MTP profiles use native llama.cpp draft-mtp; no-MTP profile has no spec-type in preset."
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV only; parallel=1; batch/ubatch reduced for MTP profiles where needed."
       },
       "benchmark": {
@@ -582,7 +574,6 @@
           "notes": "MTP profiles use native llama.cpp draft-mtp; no-MTP profile has no spec-type in preset."
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV only; parallel=1; batch/ubatch reduced for MTP profiles where needed."
       },
       "benchmark": {
@@ -652,7 +643,6 @@
           "notes": "MTP profiles use native llama.cpp draft-mtp; no-MTP profile has no spec-type in preset."
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV only; parallel=1; batch/ubatch reduced for MTP profiles where needed."
       },
       "benchmark": {
@@ -722,7 +712,6 @@
           "notes": "MTP profiles use native llama.cpp draft-mtp; no-MTP profile has no spec-type in preset."
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV only; parallel=1; batch/ubatch reduced for MTP profiles where needed."
       },
       "benchmark": {
@@ -792,7 +781,6 @@
           "notes": "MTP profiles use native llama.cpp draft-mtp; no-MTP profile has no spec-type in preset."
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV only; parallel=1; batch/ubatch reduced for MTP profiles where needed."
       },
       "benchmark": {
@@ -840,7 +828,7 @@
         "engine": "llama.cpp",
         "version": "llama.cpp 9293",
         "commit": "1acee6bf8",
-        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN; non-interactive compute-mode switch was unavailable."
+        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN. Compute-profile results are reported separately."
       },
       "model": {
         "id": "Qwen3.6-27B-rdna16-64k-q8kv-mtp-b512",
@@ -862,7 +850,6 @@
           "notes": "native llama.cpp draft-mtp; load logs show speculative decoding context initialized"
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV preferred; parallel=1; batch/ubatch reduced per context to fit MTP on RX 6900 XT"
       },
       "benchmark": {
@@ -882,7 +869,7 @@
         "wall_seconds": 7.745
       },
       "caveats": [
-        "Not a compute-mode result; non-interactive sudo was unavailable for changing LACT/sysfs power profile."
+        "3D_FULL_SCREEN power-profile result; compare separately from COMPUTE power-profile rows."
       ],
       "_source_file": "data/results/rx6900xt-qwen36-mtp-q8-short-20260523.json"
     },
@@ -910,7 +897,7 @@
         "engine": "llama.cpp",
         "version": "llama.cpp 9293",
         "commit": "1acee6bf8",
-        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN; non-interactive compute-mode switch was unavailable."
+        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN. Compute-profile results are reported separately."
       },
       "model": {
         "id": "Qwen3.6-27B-rdna16-64k-q8kv-mtp-b512",
@@ -932,7 +919,6 @@
           "notes": "native llama.cpp draft-mtp; load logs show speculative decoding context initialized"
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV preferred; parallel=1; batch/ubatch reduced per context to fit MTP on RX 6900 XT"
       },
       "benchmark": {
@@ -952,7 +938,7 @@
         "wall_seconds": 16.543
       },
       "caveats": [
-        "Not a compute-mode result; non-interactive sudo was unavailable for changing LACT/sysfs power profile."
+        "3D_FULL_SCREEN power-profile result; compare separately from COMPUTE power-profile rows."
       ],
       "_source_file": "data/results/rx6900xt-qwen36-mtp-q8-short-20260523.json"
     },
@@ -980,7 +966,7 @@
         "engine": "llama.cpp",
         "version": "llama.cpp 9293",
         "commit": "1acee6bf8",
-        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN; non-interactive compute-mode switch was unavailable."
+        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN. Compute-profile results are reported separately."
       },
       "model": {
         "id": "Qwen3.6-27B-rdna16-100k-q8kv-mtp-b256",
@@ -1002,7 +988,6 @@
           "notes": "native llama.cpp draft-mtp; load logs show speculative decoding context initialized"
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV preferred; parallel=1; batch/ubatch reduced per context to fit MTP on RX 6900 XT"
       },
       "benchmark": {
@@ -1022,7 +1007,7 @@
         "wall_seconds": 7.779
       },
       "caveats": [
-        "Not a compute-mode result; non-interactive sudo was unavailable for changing LACT/sysfs power profile."
+        "3D_FULL_SCREEN power-profile result; compare separately from COMPUTE power-profile rows."
       ],
       "_source_file": "data/results/rx6900xt-qwen36-mtp-q8-short-20260523.json"
     },
@@ -1050,7 +1035,7 @@
         "engine": "llama.cpp",
         "version": "llama.cpp 9293",
         "commit": "1acee6bf8",
-        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN; non-interactive compute-mode switch was unavailable."
+        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN. Compute-profile results are reported separately."
       },
       "model": {
         "id": "Qwen3.6-27B-rdna16-100k-q8kv-mtp-b256",
@@ -1072,7 +1057,6 @@
           "notes": "native llama.cpp draft-mtp; load logs show speculative decoding context initialized"
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV preferred; parallel=1; batch/ubatch reduced per context to fit MTP on RX 6900 XT"
       },
       "benchmark": {
@@ -1092,7 +1076,7 @@
         "wall_seconds": 16.639
       },
       "caveats": [
-        "Not a compute-mode result; non-interactive sudo was unavailable for changing LACT/sysfs power profile."
+        "3D_FULL_SCREEN power-profile result; compare separately from COMPUTE power-profile rows."
       ],
       "_source_file": "data/results/rx6900xt-qwen36-mtp-q8-short-20260523.json"
     },
@@ -1120,7 +1104,7 @@
         "engine": "llama.cpp",
         "version": "llama.cpp 9293",
         "commit": "1acee6bf8",
-        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN; non-interactive compute-mode switch was unavailable."
+        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN. Compute-profile results are reported separately."
       },
       "model": {
         "id": "Qwen3.6-35B-A3B-rdna16-100k-q8kv-mtp-b512",
@@ -1142,7 +1126,6 @@
           "notes": "native llama.cpp draft-mtp; load logs show speculative decoding context initialized"
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV preferred; parallel=1; batch/ubatch reduced per context to fit MTP on RX 6900 XT"
       },
       "benchmark": {
@@ -1162,7 +1145,7 @@
         "wall_seconds": 3.327
       },
       "caveats": [
-        "Not a compute-mode result; non-interactive sudo was unavailable for changing LACT/sysfs power profile."
+        "3D_FULL_SCREEN power-profile result; compare separately from COMPUTE power-profile rows."
       ],
       "_source_file": "data/results/rx6900xt-qwen36-mtp-q8-short-20260523.json"
     },
@@ -1190,7 +1173,7 @@
         "engine": "llama.cpp",
         "version": "llama.cpp 9293",
         "commit": "1acee6bf8",
-        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN; non-interactive compute-mode switch was unavailable."
+        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN. Compute-profile results are reported separately."
       },
       "model": {
         "id": "Qwen3.6-35B-A3B-rdna16-100k-q8kv-mtp-b512",
@@ -1212,7 +1195,6 @@
           "notes": "native llama.cpp draft-mtp; load logs show speculative decoding context initialized"
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV preferred; parallel=1; batch/ubatch reduced per context to fit MTP on RX 6900 XT"
       },
       "benchmark": {
@@ -1232,7 +1214,7 @@
         "wall_seconds": 7.469
       },
       "caveats": [
-        "Not a compute-mode result; non-interactive sudo was unavailable for changing LACT/sysfs power profile."
+        "3D_FULL_SCREEN power-profile result; compare separately from COMPUTE power-profile rows."
       ],
       "_source_file": "data/results/rx6900xt-qwen36-mtp-q8-short-20260523.json"
     },
@@ -1260,7 +1242,7 @@
         "engine": "llama.cpp",
         "version": "llama.cpp 9293",
         "commit": "1acee6bf8",
-        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN; non-interactive compute-mode switch was unavailable."
+        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN. Compute-profile results are reported separately."
       },
       "model": {
         "id": "Qwen3.6-35B-A3B-rdna16-131k-q8kv-mtp-b256",
@@ -1282,7 +1264,6 @@
           "notes": "native llama.cpp draft-mtp; load logs show speculative decoding context initialized"
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV preferred; parallel=1; batch/ubatch reduced per context to fit MTP on RX 6900 XT"
       },
       "benchmark": {
@@ -1302,7 +1283,7 @@
         "wall_seconds": 3.234
       },
       "caveats": [
-        "Not a compute-mode result; non-interactive sudo was unavailable for changing LACT/sysfs power profile."
+        "3D_FULL_SCREEN power-profile result; compare separately from COMPUTE power-profile rows."
       ],
       "_source_file": "data/results/rx6900xt-qwen36-mtp-q8-short-20260523.json"
     },
@@ -1330,7 +1311,7 @@
         "engine": "llama.cpp",
         "version": "llama.cpp 9293",
         "commit": "1acee6bf8",
-        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN; non-interactive compute-mode switch was unavailable."
+        "notes": "Desktop LACT profile Default; amdgpu pp_power_profile_mode 3D_FULL_SCREEN. Compute-profile results are reported separately."
       },
       "model": {
         "id": "Qwen3.6-35B-A3B-rdna16-131k-q8kv-mtp-b256",
@@ -1352,7 +1333,6 @@
           "notes": "native llama.cpp draft-mtp; load logs show speculative decoding context initialized"
         },
         "thinking": "off",
-        "reasoning_budget": 8192,
         "notes": "q8 KV preferred; parallel=1; batch/ubatch reduced per context to fit MTP on RX 6900 XT"
       },
       "benchmark": {
@@ -1372,9 +1352,225 @@
         "wall_seconds": 7.309
       },
       "caveats": [
-        "Not a compute-mode result; non-interactive sudo was unavailable for changing LACT/sysfs power profile."
+        "3D_FULL_SCREEN power-profile result; compare separately from COMPUTE power-profile rows."
       ],
       "_source_file": "data/results/rx6900xt-qwen36-mtp-q8-short-20260523.json"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "rx6900xt-vulkan-mtp-q8-3dfullscreen-20260523-qwen3.6-35b-a3b-ud-iq3_xxs.gguf-short-chat-1",
+      "timestamp_utc": "2026-05-23T04:19:19.797385+00:00",
+      "source": {
+        "type": "seed",
+        "label": "rx6900xt-vulkan-seed",
+        "notes": "Generated by scripts/run_openai_bench.py"
+      },
+      "promotion_level": "benchmark",
+      "hardware": {
+        "lane": "1x-rdna16",
+        "gpu_count": 1,
+        "gpu_model": "AMD Radeon RX 6900 XT",
+        "vram_per_gpu_gb": 16.0,
+        "driver": "Vulkan RADV, Mesa 26.2.0-devel, amdgpu",
+        "cpu": "Intel Core i9-10900K",
+        "host_ram_gb": 64.0,
+        "pcie": "PCIe Gen3 x16",
+        "notes": "amdgpu pp_power_profile_mode 3D_FULL_SCREEN during this Vulkan pass"
+      },
+      "runtime": {
+        "engine": "llama.cpp",
+        "version": "llama.cpp 9293",
+        "commit": "1acee6bf8",
+        "notes": "Sidecar Vulkan build from the same llama.cpp commit; GGML_VULKAN=ON, GGML_HIP=OFF, local user-space SPIRV-Headers prefix."
+      },
+      "model": {
+        "id": "Qwen3.6-35B-A3B-rdna16-100k-q8kv-mtp-vulkan",
+        "family": "Qwen3.6",
+        "architecture": "hybrid",
+        "parameter_class": "35B-A3B",
+        "quant": "UD-IQ3_XXS",
+        "source": "unsloth Qwen3.6 35B-A3B MTP GGUF"
+      },
+      "serving": {
+        "route": "server",
+        "context_tokens": 102400,
+        "batch_size": 512,
+        "ubatch_size": 256,
+        "kv_cache_k": "q8_0",
+        "kv_cache_v": "q8_0",
+        "speculation": {
+          "type": "draft-mtp",
+          "draft_n": 3,
+          "notes": "Vulkan server logs showed draft-mtp initialized and accepted draft tokens."
+        },
+        "thinking": "off",
+        "notes": "Vulkan q8 KV, parallel=1, no-thinking, prompt cache disabled."
+      },
+      "benchmark": {
+        "prompt_set": "short-chat",
+        "configured_context_tokens": 102400,
+        "actual_prompt_tokens": 31,
+        "generated_tokens": 256,
+        "runs": 1,
+        "warmups": 1,
+        "stream": false,
+        "notes": "OpenAI-compatible prompt benchmark over SSH tunnel to desktop localhost Vulkan server."
+      },
+      "metrics": {
+        "prompt_tok_s": 207.2538860103627,
+        "decode_tok_s": 112.91316404297935,
+        "end_to_end_tok_s": 105.319,
+        "wall_seconds": 2.431
+      },
+      "caveats": [
+        "3D_FULL_SCREEN power-profile result; compare separately from COMPUTE power-profile rows.",
+        "Exploratory Vulkan backend lane; repeat under COMPUTE power profile before replacing HIP guidance."
+      ],
+      "_source_file": "data/results/rx6900xt-qwen36-vulkan-mtp-q8-20260523.json"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "rx6900xt-vulkan-mtp-q8-3dfullscreen-20260523-qwen3.6-35b-a3b-ud-iq3_xxs.gguf-agent-tool-1",
+      "timestamp_utc": "2026-05-23T04:19:29.335896+00:00",
+      "source": {
+        "type": "seed",
+        "label": "rx6900xt-vulkan-seed",
+        "notes": "Generated by scripts/run_openai_bench.py"
+      },
+      "promotion_level": "benchmark",
+      "hardware": {
+        "lane": "1x-rdna16",
+        "gpu_count": 1,
+        "gpu_model": "AMD Radeon RX 6900 XT",
+        "vram_per_gpu_gb": 16.0,
+        "driver": "Vulkan RADV, Mesa 26.2.0-devel, amdgpu",
+        "cpu": "Intel Core i9-10900K",
+        "host_ram_gb": 64.0,
+        "pcie": "PCIe Gen3 x16",
+        "notes": "amdgpu pp_power_profile_mode 3D_FULL_SCREEN during this Vulkan pass"
+      },
+      "runtime": {
+        "engine": "llama.cpp",
+        "version": "llama.cpp 9293",
+        "commit": "1acee6bf8",
+        "notes": "Sidecar Vulkan build from the same llama.cpp commit; GGML_VULKAN=ON, GGML_HIP=OFF, local user-space SPIRV-Headers prefix."
+      },
+      "model": {
+        "id": "Qwen3.6-35B-A3B-rdna16-100k-q8kv-mtp-vulkan",
+        "family": "Qwen3.6",
+        "architecture": "hybrid",
+        "parameter_class": "35B-A3B",
+        "quant": "UD-IQ3_XXS",
+        "source": "unsloth Qwen3.6 35B-A3B MTP GGUF"
+      },
+      "serving": {
+        "route": "server",
+        "context_tokens": 102400,
+        "batch_size": 512,
+        "ubatch_size": 256,
+        "kv_cache_k": "q8_0",
+        "kv_cache_v": "q8_0",
+        "speculation": {
+          "type": "draft-mtp",
+          "draft_n": 3,
+          "notes": "Vulkan server logs showed draft-mtp initialized and accepted draft tokens."
+        },
+        "thinking": "off",
+        "notes": "Vulkan q8 KV, parallel=1, no-thinking, prompt cache disabled."
+      },
+      "benchmark": {
+        "prompt_set": "agent-tool",
+        "configured_context_tokens": 102400,
+        "actual_prompt_tokens": 98,
+        "generated_tokens": 512,
+        "runs": 1,
+        "warmups": 1,
+        "stream": false,
+        "notes": "OpenAI-compatible prompt benchmark over SSH tunnel to desktop localhost Vulkan server."
+      },
+      "metrics": {
+        "prompt_tok_s": 92.47699634715865,
+        "decode_tok_s": 111.84687812862697,
+        "end_to_end_tok_s": 110.463,
+        "wall_seconds": 4.635
+      },
+      "caveats": [
+        "3D_FULL_SCREEN power-profile result; compare separately from COMPUTE power-profile rows.",
+        "Exploratory Vulkan backend lane; repeat under COMPUTE power profile before replacing HIP guidance."
+      ],
+      "_source_file": "data/results/rx6900xt-qwen36-vulkan-mtp-q8-20260523.json"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "rx6900xt-vulkan-mtp-q8-3dfullscreen-20260523-qwen3.6-35b-a3b-long-retrieval-1",
+      "timestamp_utc": "2026-05-23T04:21:42.804861+00:00",
+      "source": {
+        "type": "seed",
+        "label": "rx6900xt-vulkan-seed",
+        "notes": "Generated by scripts/long_context_needle.py"
+      },
+      "promotion_level": "benchmark",
+      "hardware": {
+        "lane": "1x-rdna16",
+        "gpu_count": 1,
+        "gpu_model": "AMD Radeon RX 6900 XT",
+        "vram_per_gpu_gb": 16.0,
+        "driver": "Vulkan RADV, Mesa 26.2.0-devel, amdgpu",
+        "cpu": "Intel Core i9-10900K",
+        "host_ram_gb": 64.0,
+        "pcie": "PCIe Gen3 x16",
+        "notes": "amdgpu pp_power_profile_mode 3D_FULL_SCREEN during this Vulkan pass"
+      },
+      "runtime": {
+        "engine": "llama.cpp",
+        "version": "llama.cpp 9293",
+        "commit": "1acee6bf8",
+        "notes": "Sidecar Vulkan build from the same llama.cpp commit; GGML_VULKAN=ON, GGML_HIP=OFF, local user-space SPIRV-Headers prefix."
+      },
+      "model": {
+        "id": "Qwen3.6-35B-A3B-rdna16-100k-q8kv-mtp-vulkan",
+        "family": "Qwen3.6",
+        "architecture": "hybrid",
+        "parameter_class": "35B-A3B",
+        "quant": "UD-IQ3_XXS",
+        "source": "unsloth Qwen3.6 35B-A3B MTP GGUF"
+      },
+      "serving": {
+        "route": "server",
+        "context_tokens": 102400,
+        "batch_size": 512,
+        "ubatch_size": 256,
+        "kv_cache_k": "q8_0",
+        "kv_cache_v": "q8_0",
+        "speculation": {
+          "type": "draft-mtp",
+          "draft_n": 3,
+          "notes": "Vulkan server logs showed draft-mtp initialized and accepted draft tokens."
+        },
+        "thinking": "off",
+        "notes": "Vulkan q8 KV, parallel=1, no-thinking, prompt cache disabled."
+      },
+      "benchmark": {
+        "prompt_set": "long-retrieval",
+        "configured_context_tokens": 102400,
+        "actual_prompt_tokens": 70998,
+        "generated_tokens": 18,
+        "runs": 1,
+        "warmups": 0,
+        "stream": false,
+        "notes": "Cold 300k-character needle retrieval passed; answer was CLUB-RDNA16-VULKAN-NEEDLE-523. This is a short-answer fit check, not a sustained decode row."
+      },
+      "metrics": {
+        "prompt_tok_s": 581.5740502605702,
+        "decode_tok_s": 116.3399453202257,
+        "end_to_end_tok_s": 0.147,
+        "wall_seconds": 122.368
+      },
+      "caveats": [
+        "3D_FULL_SCREEN power-profile result; compare separately from COMPUTE power-profile rows.",
+        "Exploratory Vulkan backend lane; repeat under COMPUTE power profile before replacing HIP guidance."
+      ],
+      "_source_file": "data/results/rx6900xt-qwen36-vulkan-mtp-q8-20260523.json"
     }
   ]
 }
