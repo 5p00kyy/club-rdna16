@@ -1,0 +1,1374 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>club-rdna16 results</title>
+  <meta name="description" content="16GB AMD Radeon local LLM benchmark recipes and measured results.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0a0a0a;
+      --bg2: #111;
+      --bg3: #171717;
+      --line: #222a33;
+      --line-2: #2a3643;
+      --text: #cfd6de;
+      --text-2: #8994a1;
+      --text-3: #66707b;
+      --bright: #eef3f8;
+      --green: #00e87a;
+      --green-2: #00b85f;
+      --amber: #f0a800;
+      --red: #e84040;
+      --blue: #4a8fff;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, Liberation Mono, monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.5;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .wrap {
+      width: min(1220px, calc(100vw - 28px));
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      border-bottom: 1px solid var(--line);
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(8px);
+    }
+
+    .topbar {
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 10px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 7px;
+      min-width: 0;
+    }
+
+    .brand .name {
+      color: var(--green);
+      font-size: 14px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .brand .sub {
+      color: var(--text-2);
+      font-size: 11px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    nav {
+      display: flex;
+      gap: 2px;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: var(--text-2);
+      font-size: 11px;
+      padding: 5px 9px;
+      border-radius: 4px;
+    }
+
+    nav a:hover {
+      color: var(--green);
+      background: var(--bg3);
+    }
+
+    nav a:focus-visible,
+    th[data-sort]:focus-visible,
+    .check:focus-within {
+      outline: 2px solid var(--blue);
+      outline-offset: 2px;
+    }
+
+    main { padding: 18px 0 30px; }
+
+    .hw-bar {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--bg2);
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hw-label {
+      color: var(--green);
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .hw-specs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .hw-spec {
+      color: var(--text-2);
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .hw-spec strong { color: var(--bright); font-weight: 600; }
+
+    .dataset-state {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--text-2);
+      white-space: nowrap;
+    }
+
+    .dataset-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      background: var(--bg2);
+      padding: 8px 9px;
+      min-height: 62px;
+      min-width: 0;
+    }
+
+    .stat .k {
+      color: var(--text-2);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 3px;
+    }
+
+    .stat .v {
+      color: var(--bright);
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 1.1;
+    }
+
+    .stat .n {
+      color: var(--text-3);
+      font-size: 11px;
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      background: var(--bg2);
+      border-radius: 6px;
+      padding: 9px;
+      margin-bottom: 12px;
+    }
+
+    .toolbar {
+      display: grid;
+      gap: 7px;
+      grid-template-columns: minmax(240px, 1.4fr) repeat(7, minmax(105px, 1fr)) repeat(2, minmax(105px, 0.8fr));
+    }
+
+    input, select {
+      width: 100%;
+      min-height: 33px;
+      padding: 6px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--line-2);
+      background: #0f141a;
+      color: var(--text);
+      font: inherit;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 1px rgba(74, 143, 255, 0.35);
+    }
+
+    .check {
+      min-height: 33px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 7px;
+      border-radius: 4px;
+      border: 1px solid var(--line-2);
+      background: #0f141a;
+      padding: 6px 8px;
+      color: var(--text-2);
+      white-space: nowrap;
+    }
+
+    .check input {
+      width: 14px;
+      min-height: auto;
+      padding: 0;
+      border: 0;
+      box-shadow: none;
+      margin: 0;
+      background: transparent;
+    }
+
+    .check:focus-within {
+      color: var(--bright);
+      border-color: var(--blue);
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .sec {
+      margin-top: 16px;
+    }
+
+    .sec-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .sec-title {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .prompt {
+      color: var(--green);
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    h1, h2 {
+      margin: 0;
+      font-size: 14px;
+      color: var(--bright);
+      font-weight: 600;
+    }
+
+    .meta {
+      color: var(--text-2);
+      font-size: 11px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .compare-note {
+      border: 1px solid var(--line-2);
+      border-left: 3px solid var(--amber);
+      border-radius: 4px;
+      background: var(--bg3);
+      padding: 7px 9px;
+      color: var(--text-2);
+      margin-bottom: 8px;
+      min-height: 34px;
+    }
+
+    .mode-note {
+      color: var(--text-3);
+      font-size: 11px;
+      margin-top: 7px;
+    }
+
+    .metric-note {
+      display: grid;
+      gap: 4px;
+      margin-top: 8px;
+      padding: 8px 9px;
+      border: 1px solid var(--line-2);
+      border-radius: 4px;
+      background: #0d1218;
+      color: var(--text-2);
+      font-size: 11px;
+    }
+
+    .metric-note strong { color: var(--bright); font-weight: 600; }
+
+    .table-wrap {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      overflow: auto;
+      overscroll-behavior-x: contain;
+      background: var(--bg2);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1040px;
+    }
+
+    th, td {
+      padding: 8px 9px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      position: static;
+      background: #10151b;
+      color: var(--text-2);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    th[data-sort] { cursor: pointer; }
+    th[data-sort]:hover { color: var(--green); }
+    th[aria-sort="ascending"],
+    th[aria-sort="descending"] { color: var(--bright); }
+    tbody tr:hover td { background: #141b23; }
+    tbody tr:last-child td { border-bottom: 0; }
+
+    .mono { font-family: var(--mono); }
+    .num { white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .muted { color: var(--text-2); }
+    .soft { color: var(--text-3); }
+
+    .model {
+      color: var(--bright);
+      font-weight: 600;
+      margin-bottom: 1px;
+      word-break: break-word;
+    }
+
+    .subline {
+      color: var(--text-3);
+      font-size: 11px;
+      word-break: break-word;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line-2);
+      border-radius: 3px;
+      min-height: 18px;
+      padding: 0 6px;
+      font-size: 10px;
+      white-space: nowrap;
+      color: var(--text);
+      background: #101720;
+    }
+
+    .badge.engine { color: #b6d4fb; border-color: #244668; background: #0f1a26; }
+    .badge.green { color: #9ff0bb; border-color: #1f6b3a; background: #0e2417; }
+    .badge.blue { color: #b5d7ff; border-color: #25598f; background: #0d1b2b; }
+    .badge.amber { color: #ffd690; border-color: #745111; background: #241a08; }
+    .badge.red { color: #ffb7b7; border-color: #713030; background: #251111; }
+
+    .bar {
+      display: grid;
+      grid-template-columns: minmax(46px, max-content) 1fr;
+      gap: 7px;
+      align-items: center;
+      min-width: 122px;
+    }
+
+    .bar-track {
+      height: 6px;
+      border-radius: 99px;
+      overflow: hidden;
+      background: #26333f;
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 0;
+      background: var(--green-2);
+    }
+
+    .model-results {
+      display: grid;
+      gap: 10px;
+    }
+
+    .model-card {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      overflow: hidden;
+      background: var(--bg2);
+    }
+
+    .model-head {
+      display: grid;
+      grid-template-columns: minmax(210px, 1.4fr) minmax(0, 2fr) auto;
+      gap: 10px;
+      align-items: start;
+      padding: 10px;
+      border-bottom: 1px solid var(--line);
+      background: #10151b;
+    }
+
+    .model-title .model { font-size: 13px; }
+
+    .model-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      min-width: 0;
+    }
+
+    .model-kpis {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(74px, auto));
+      gap: 6px;
+      justify-content: end;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .model-kpi .k {
+      color: var(--text-3);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .model-kpi .v {
+      color: var(--bright);
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .prompt-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+    }
+
+    .prompt-table th, .prompt-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .prompt-table tr:last-child td { border-bottom: 0; }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .summary-card {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--bg2);
+      overflow: hidden;
+    }
+
+    .summary-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px 9px;
+      border-bottom: 1px solid var(--line);
+      background: #10151b;
+    }
+
+    .summary-title {
+      margin: 0;
+      color: var(--bright);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .mini {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 0;
+    }
+
+    .mini th, .mini td {
+      padding: 7px 9px;
+      border-bottom: 1px solid var(--line);
+      font-size: 11px;
+    }
+
+    .mini th {
+      position: static;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-2);
+      background: transparent;
+      font-size: 9px;
+    }
+
+    .mini tr:last-child td { border-bottom: 0; }
+
+    footer {
+      margin-top: 22px;
+      border-top: 1px solid var(--line);
+      color: var(--text-3);
+      padding: 12px 0 24px;
+      font-size: 11px;
+    }
+
+    @media (max-width: 1060px) {
+      .stat-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .toolbar { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .toolbar > input { grid-column: 1 / -1; }
+      .summary-grid { grid-template-columns: 1fr; }
+      .model-head { grid-template-columns: 1fr; }
+      .model-kpis { justify-content: start; text-align: left; }
+    }
+
+    @media (max-width: 720px) {
+      .wrap { width: min(100vw - 18px, 1220px); }
+      .topbar { align-items: flex-start; }
+      .brand { flex-direction: column; align-items: flex-start; gap: 2px; }
+      .hw-bar { grid-template-columns: 1fr; gap: 7px; }
+      .stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .toolbar { grid-template-columns: 1fr; }
+      .meta { white-space: normal; }
+      .results-wrap {
+        border: 0;
+        background: transparent;
+        overflow: visible;
+      }
+      .results-table {
+        min-width: 0;
+        border-collapse: separate;
+        border-spacing: 0 8px;
+      }
+      .results-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+      .results-table tbody,
+      .results-table tr,
+      .results-table td { display: block; }
+      .results-table tr {
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--bg2);
+        overflow: hidden;
+      }
+      .results-table td {
+        display: grid;
+        grid-template-columns: minmax(82px, 32%) minmax(0, 1fr);
+        gap: 8px;
+        padding: 7px 9px;
+        border-bottom: 1px solid var(--line);
+      }
+      .results-table td::before {
+        content: attr(data-label);
+        color: var(--text-3);
+        font-size: 9px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+      .results-table td:first-child,
+      .results-table .empty-row td { display: block; }
+      .results-table td:first-child::before {
+        display: block;
+        margin-bottom: 4px;
+      }
+      .results-table .empty-row td::before { display: none; }
+      .results-table .badge { white-space: normal; }
+      .results-table .bar {
+        min-width: 0;
+        grid-template-columns: minmax(44px, max-content) 1fr;
+      }
+      .model-results { gap: 9px; }
+      .model-head { padding: 9px; }
+      .model-tags .badge { white-space: normal; }
+      .prompt-table { min-width: 0; }
+      .prompt-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+      .prompt-table tbody,
+      .prompt-table tr,
+      .prompt-table td { display: block; }
+      .prompt-table tr { border-bottom: 1px solid var(--line); }
+      .prompt-table tr:last-child { border-bottom: 0; }
+      .prompt-table td {
+        display: grid;
+        grid-template-columns: minmax(90px, 34%) minmax(0, 1fr);
+        gap: 8px;
+        padding: 7px 9px;
+        border-bottom: 1px solid var(--line);
+      }
+      .prompt-table td:last-child { border-bottom: 0; }
+      .prompt-table td::before {
+        content: attr(data-label);
+        color: var(--text-3);
+        font-size: 9px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+      .prompt-table .bar {
+        min-width: 0;
+        grid-template-columns: minmax(44px, max-content) 1fr;
+      }
+    }
+
+    @media (max-width: 460px) {
+      .stat-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap topbar">
+      <div class="brand">
+        <span class="name">club-rdna16</span>
+        <span class="sub">local LLM recipes and measured benchmark evidence</span>
+      </div>
+      <nav>
+        <a href="#results">results</a>
+        <a href="#summaries">summaries</a>
+        <a href="https://github.com/5p00kyy/club-rdna16/blob/main/docs/benchmark-protocol.md">protocol</a>
+        <a href="https://github.com/5p00kyy/club-rdna16">repo</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="hw-bar">
+      <div class="hw-label">hardware lane</div>
+      <div class="hw-specs">
+        <span class="hw-spec"><strong id="hw-gpu">loading</strong></span>
+        <span class="hw-spec" id="hw-vram"></span>
+        <span class="hw-spec" id="hw-ram"></span>
+      </div>
+      <div class="dataset-state" role="status" aria-live="polite">
+        <span class="dataset-dot" aria-hidden="true"></span>
+        <span id="hw-updated">dataset loaded</span>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="k">Visible models</div>
+        <div class="v" id="metric-visible">0</div>
+        <div class="n" id="metric-total">0 raw runs loaded</div>
+      </div>
+      <div class="stat">
+        <div class="k">Raw runs</div>
+        <div class="v" id="metric-raw-visible">0</div>
+        <div class="n">in current filters</div>
+      </div>
+      <div class="stat">
+        <div class="k">Highest context</div>
+        <div class="v" id="metric-context">n/a</div>
+        <div class="n">configured tokens</div>
+      </div>
+      <div class="stat">
+        <div class="k">Best generation</div>
+        <div class="v" id="metric-best-decode">n/a</div>
+        <div class="n">generated tok/s</div>
+      </div>
+      <div class="stat">
+        <div class="k">MTP setups</div>
+        <div class="v" id="metric-mtp">0</div>
+        <div class="n">visible model cards</div>
+      </div>
+      <div class="stat">
+        <div class="k">Archived imports</div>
+        <div class="v" id="metric-archived">0</div>
+        <div class="n">hidden by default</div>
+      </div>
+    </div>
+
+    <div class="panel" id="results">
+      <div class="toolbar">
+        <label class="sr-only" for="search">Filter results</label>
+        <input id="search" type="search" placeholder="filter model, engine, quant, MTP, caveat" autocomplete="off" aria-controls="results-list">
+        <label class="sr-only" for="gpu-filter">Hardware filter</label>
+        <select id="gpu-filter" aria-controls="results-list"></select>
+        <label class="sr-only" for="engine-filter">Engine filter</label>
+        <select id="engine-filter" aria-controls="results-list"></select>
+        <label class="sr-only" for="spec-filter">MTP/speculation filter</label>
+        <select id="spec-filter" aria-controls="results-list"></select>
+        <label class="sr-only" for="thinking-filter">Thinking mode filter</label>
+        <select id="thinking-filter" aria-controls="results-list"></select>
+        <label class="sr-only" for="family-filter">Model family filter</label>
+        <select id="family-filter" aria-controls="results-list"></select>
+        <label class="sr-only" for="level-filter">Evidence filter</label>
+        <select id="level-filter" aria-controls="results-list"></select>
+        <label class="sr-only" for="prompt-filter">Prompt set filter</label>
+        <select id="prompt-filter" aria-controls="results-list"></select>
+        <label class="check"><input id="archived-filter" type="checkbox" aria-controls="results-list"> archived imports</label>
+        <label class="check"><input id="raw-filter" type="checkbox" aria-controls="results-list"> raw runs</label>
+      </div>
+      <div class="mode-note" id="mode-note">Default view groups rows by model/setup, then shows prompt results inside each model card. Enable raw runs to inspect repeated measurements.</div>
+      <div class="metric-note"><div><strong>Generation tok/s</strong> is output-token speed after the prompt is processed.</div><div><strong>Prompt eval tok/s</strong> is input/prompt processing speed before generation starts. MTP/speculation is shown separately because it changes generation behavior.</div></div>
+    </div>
+
+    <section class="sec">
+      <div class="sec-head">
+        <div class="sec-title">
+          <span class="prompt">$</span>
+          <h1>benchmark results</h1>
+        </div>
+        <span class="meta" id="sort-label">grouped by model/setup</span>
+      </div>
+      <div class="compare-note" id="compare-note" role="status" aria-live="polite"></div>
+      <div class="model-results" id="results-list" aria-describedby="compare-note mode-note"></div>
+    </section>
+
+    <section class="sec" id="summaries">
+      <div class="sec-head">
+        <div class="sec-title">
+          <span class="prompt">$</span>
+          <h2>lane summaries</h2>
+        </div>
+        <span class="meta">computed from currently visible rows</span>
+      </div>
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="summary-head">
+            <h3 class="summary-title">engine lanes</h3>
+            <span class="meta" id="engine-summary-meta"></span>
+          </div>
+          <div class="table-wrap" style="border:0;border-radius:0;">
+            <table class="mini">
+              <thead>
+                <tr>
+                  <th>Engine</th>
+                  <th>Rows</th>
+                  <th>Best Decode</th>
+                  <th>Best Context</th>
+                </tr>
+              </thead>
+              <tbody id="engine-summary-body"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-head">
+            <h3 class="summary-title">model families</h3>
+            <span class="meta" id="family-summary-meta"></span>
+          </div>
+          <div class="table-wrap" style="border:0;border-radius:0;">
+            <table class="mini">
+              <thead>
+                <tr>
+                  <th>Family</th>
+                  <th>Rows</th>
+                  <th>Best Decode</th>
+                  <th>Best Context</th>
+                </tr>
+              </thead>
+              <tbody id="family-summary-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">Numbers are benchmark evidence for the visible hardware lane(s) and protocol, not universal speed claims.</div>
+  </footer>
+
+  <script>
+    const DATA_URL = 'data/results.json';
+    let allResults = [];
+    let filteredResults = [];
+    let visibleResults = [];
+    let sortKey = 'decode';
+    let sortDir = -1;
+
+    const formatNumber = (value, digits) => {
+      if (value === undefined || value === null || Number.isNaN(Number(value))) return 'n/a';
+      return Number(value).toLocaleString(undefined, { maximumFractionDigits: digits });
+    };
+
+    const get = (obj, path, fallback) => {
+      let current = obj;
+      for (const part of path.split('.')) {
+        if (!current || current[part] === undefined) return fallback;
+        current = current[part];
+      }
+      return current;
+    };
+
+    const unique = (items) => Array.from(new Set(items.filter(Boolean))).sort((a, b) => String(a).localeCompare(String(b)));
+    const resultLabels = ['Model', 'Engine', 'Hardware', 'Context', 'Prompt Set', 'Decode', 'Prompt', 'Runs', 'Evidence', 'Caveat'];
+
+    const normalizeGpuModel = (model) => String(model || 'GPU')
+      .replace(/^AMD\s+(GeForce\s+)?/i, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    const gpuFilterLabel = (item) => {
+      const count = get(item, 'hardware.gpu_count', '');
+      const model = normalizeGpuModel(get(item, 'hardware.gpu_model', 'GPU'));
+      return String(count || '?') + 'x ' + model;
+    };
+
+    const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    })[char]);
+
+    const fillSelect = (id, label, values) => {
+      const select = document.getElementById(id);
+      select.innerHTML = '';
+      const first = document.createElement('option');
+      first.value = '';
+      first.textContent = label;
+      select.appendChild(first);
+      for (const value of values) {
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = value;
+        select.appendChild(option);
+      }
+    };
+
+    const resultText = (item) => [
+      get(item, 'model.id', ''),
+      get(item, 'model.family', ''),
+      get(item, 'model.quant', ''),
+      get(item, 'runtime.engine', ''),
+      hardwareLaneLabel(item),
+      gpuFilterLabel(item),
+      get(item, 'hardware.gpu_model', ''),
+      get(item, 'serving.speculation.type', ''),
+      get(item, 'serving.speculation.draft_n', ''),
+      get(item, 'serving.thinking', ''),
+      get(item, 'serving.reasoning_budget', ''),
+      get(item, 'benchmark.prompt_set', ''),
+      (item.caveats || []).join(' ')
+    ].join(' ').toLowerCase();
+
+    const sortValue = (item, key) => {
+      if (key === 'model') return get(item, 'model.id', '');
+      if (key === 'engine') return get(item, 'runtime.engine', '');
+      if (key === 'gpus') return get(item, 'hardware.gpu_count', 0);
+      if (key === 'context') return get(item, 'serving.context_tokens', get(item, 'benchmark.configured_context_tokens', 0));
+      if (key === 'prompt') return get(item, 'benchmark.prompt_set', '');
+      if (key === 'decode') return get(item, 'metrics.decode_tok_s', 0);
+      if (key === 'prompt_speed') return get(item, 'metrics.prompt_tok_s', 0);
+      if (key === 'runs') return item._run_count || 1;
+      if (key === 'level') return get(item, 'promotion_level', '');
+      return '';
+    };
+
+    const badgeClass = (level) => {
+      if (level === 'verified' || level === 'benchmark') return 'green';
+      if (level === 'recipe') return 'blue';
+      if (level === 'exploratory') return 'amber';
+      if (level === 'deprecated') return 'red';
+      return '';
+    };
+
+    const renderBar = (value, max) => {
+      const width = max > 0 && value ? Math.max(3, Math.min(100, (value / max) * 100)) : 0;
+      return '<div class="bar"><span class="num">' + formatNumber(value, 1) + '</span><div class="bar-track"><div class="bar-fill" style="width:' + width + '%"></div></div></div>';
+    };
+
+    const cell = (index, content, className = '') => {
+      const classAttr = className ? ' class="' + className + '"' : '';
+      return '<td data-label="' + escapeHtml(resultLabels[index]) + '"' + classAttr + '>' + content + '</td>';
+    };
+
+    const specLabel = (item) => {
+      const type = get(item, 'serving.speculation.type', '');
+      const draft = get(item, 'serving.speculation.draft_n', null);
+      if (!type || type === 'none' || Number(draft || 0) === 0) return 'no MTP';
+      return type + (draft ? ' n=' + draft : '');
+    };
+
+    const hardwareLaneLabel = (item) => {
+      const lane = get(item, 'hardware.lane', '');
+      const labels = {
+        '1x-rdna16': '1x RDNA16 Radeon',
+        '2x-rdna16': '2x RDNA16 Radeon',
+        'multi-rdna16': 'multi RDNA16 Radeon',
+        'other-radeon-16gb': 'other 16GB Radeon',
+        'other-amd': 'other AMD',
+        'unknown': 'unknown lane',
+      };
+      if (lane) return labels[lane] || lane.replaceAll('-', ' ');
+      const count = Number(get(item, 'hardware.gpu_count', 0) || 0);
+      const model = String(get(item, 'hardware.gpu_model', 'GPU'));
+      if (model.includes('RDNA16 Radeon') && count === 1) return '1x RDNA16 Radeon';
+      if (model.includes('RDNA16 Radeon') && count === 2) return '2x RDNA16 Radeon';
+      if (model.includes('RDNA16 Radeon') && count >= 3) return 'multi RDNA16 Radeon';
+      return 'other ROCm/HIP';
+    };
+
+    const setupCardKey = (item) => [
+      get(item, 'model.id', ''),
+      get(item, 'model.family', ''),
+      get(item, 'model.quant', ''),
+      get(item, 'runtime.engine', ''),
+      get(item, 'runtime.version', ''),
+      get(item, 'runtime.commit', ''),
+      get(item, 'runtime.build', ''),
+      get(item, 'hardware.gpu_count', ''),
+      get(item, 'hardware.lane', ''),
+      get(item, 'hardware.gpu_model', ''),
+      get(item, 'hardware.driver', ''),
+      get(item, 'hardware.pcie', ''),
+      get(item, 'serving.context_tokens', get(item, 'benchmark.configured_context_tokens', '')),
+      get(item, 'serving.batch_size', ''),
+      get(item, 'serving.ubatch_size', ''),
+      get(item, 'serving.kv_cache_k', ''),
+      get(item, 'serving.kv_cache_v', ''),
+      get(item, 'serving.tensor_parallel', ''),
+      get(item, 'serving.split_mode', ''),
+      get(item, 'serving.gpu_layers', ''),
+      get(item, 'serving.speculation.type', ''),
+      get(item, 'serving.speculation.draft_n', ''),
+      get(item, 'serving.thinking', ''),
+      get(item, 'serving.reasoning_budget', ''),
+      get(item, 'promotion_level', ''),
+      get(item, 'source.type', ''),
+      get(item, 'source.label', '')
+    ].join('|');
+
+    const promptOrder = { 'short-chat': 1, 'code-generate': 2, 'agent-tool': 3, 'long-retrieval': 4, legacy: 9 };
+
+    const buildModelCards = (items) => {
+      const groups = new Map();
+      for (const item of items) {
+        const key = setupCardKey(item);
+        const existing = groups.get(key) || { rows: [] };
+        existing.rows.push(item);
+        groups.set(key, existing);
+      }
+
+      return Array.from(groups.values()).map((group) => {
+        group.rows.sort((a, b) => (promptOrder[get(a, 'benchmark.prompt_set', '')] || 99) - (promptOrder[get(b, 'benchmark.prompt_set', '')] || 99) || String(a.id || '').localeCompare(String(b.id || '')));
+        const base = group.rows[0];
+        group.base = base;
+        group.bestDecode = Math.max(0, ...group.rows.map((item) => Number(get(item, 'metrics.decode_tok_s', 0) || 0)));
+        group.bestPrompt = Math.max(0, ...group.rows.map((item) => Number(get(item, 'metrics.prompt_tok_s', 0) || 0)));
+        group.maxContext = Math.max(0, ...group.rows.map((item) => Number(get(item, 'serving.context_tokens', get(item, 'benchmark.configured_context_tokens', 0)) || 0)));
+        group.rawRuns = group.rows.reduce((sum, item) => sum + (item._run_count || 1), 0);
+        return group;
+      }).sort((a, b) => b.bestDecode - a.bestDecode || String(get(a.base, 'model.id', '')).localeCompare(String(get(b.base, 'model.id', ''))));
+    };
+
+    const groupKey = (item) => [
+      get(item, 'model.id', ''),
+      get(item, 'model.family', ''),
+      get(item, 'model.quant', ''),
+      get(item, 'runtime.engine', ''),
+      get(item, 'runtime.version', ''),
+      get(item, 'runtime.commit', ''),
+      get(item, 'runtime.build', ''),
+      get(item, 'hardware.gpu_count', ''),
+      get(item, 'hardware.lane', ''),
+      get(item, 'hardware.gpu_model', ''),
+      get(item, 'hardware.driver', ''),
+      get(item, 'hardware.pcie', ''),
+      get(item, 'serving.context_tokens', get(item, 'benchmark.configured_context_tokens', '')),
+      get(item, 'serving.batch_size', ''),
+      get(item, 'serving.ubatch_size', ''),
+      get(item, 'serving.kv_cache_k', ''),
+      get(item, 'serving.kv_cache_v', ''),
+      get(item, 'serving.tensor_parallel', ''),
+      get(item, 'serving.split_mode', ''),
+      get(item, 'serving.gpu_layers', ''),
+      get(item, 'serving.speculation.type', ''),
+      get(item, 'serving.speculation.draft_n', ''),
+      get(item, 'serving.thinking', ''),
+      get(item, 'serving.reasoning_budget', ''),
+      get(item, 'benchmark.prompt_set', ''),
+      get(item, 'benchmark.configured_context_tokens', ''),
+      get(item, 'benchmark.actual_prompt_tokens', ''),
+      get(item, 'benchmark.generated_tokens', ''),
+      get(item, 'benchmark.warmups', ''),
+      get(item, 'benchmark.stream', ''),
+      get(item, 'promotion_level', ''),
+      get(item, 'source.type', ''),
+      get(item, 'source.label', '')
+    ].join('|');
+
+    const collapseRepeatedRuns = (items) => {
+      const groups = new Map();
+      for (const item of items) {
+        const key = groupKey(item);
+        const row = groups.get(key) || [];
+        row.push(item);
+        groups.set(key, row);
+      }
+
+      return Array.from(groups.values()).map((runs) => {
+        const sorted = [...runs].sort((a, b) => Number(get(b, 'metrics.decode_tok_s', 0) || 0) - Number(get(a, 'metrics.decode_tok_s', 0) || 0));
+        const best = JSON.parse(JSON.stringify(sorted[0]));
+        const decodeValues = runs.map((item) => Number(get(item, 'metrics.decode_tok_s', 0) || 0)).filter((value) => value > 0);
+        const promptValues = runs.map((item) => Number(get(item, 'metrics.prompt_tok_s', 0) || 0)).filter((value) => value > 0);
+        best._run_count = runs.length;
+        best._raw_ids = runs.map((item) => item.id).filter(Boolean);
+        best._avg_decode_tok_s = decodeValues.length ? decodeValues.reduce((sum, value) => sum + value, 0) / decodeValues.length : null;
+        best._avg_prompt_tok_s = promptValues.length ? promptValues.reduce((sum, value) => sum + value, 0) / promptValues.length : null;
+        return best;
+      });
+    };
+
+    const buildHardwareLane = (items = allResults) => {
+      const buckets = new Map();
+      let latest = null;
+      for (const item of items) {
+        const gpuCount = get(item, 'hardware.gpu_count', '?');
+        const gpuModel = get(item, 'hardware.gpu_model', 'GPU');
+        const vram = get(item, 'hardware.vram_per_gpu_gb', null);
+        const hostRam = get(item, 'hardware.host_ram_gb', null);
+        const inferenceRam = get(item, 'hardware.inference_ram_gb', null);
+        const lane = hardwareLaneLabel(item);
+        const key = [gpuCount, gpuModel, vram, hostRam, inferenceRam, lane].join('|');
+        const existing = buckets.get(key) || { count: 0, gpuCount, gpuModel, vram, hostRam, inferenceRam, lane };
+        existing.count += 1;
+        buckets.set(key, existing);
+        const ts = get(item, 'timestamp_utc', null);
+        if (ts && (!latest || ts > latest)) latest = ts;
+      }
+      const lanes = Array.from(buckets.values()).sort((a, b) => b.count - a.count);
+      if (lanes.length === 1) {
+        const lane = lanes[0];
+        document.getElementById('hw-gpu').textContent = lane.gpuCount + 'x ' + lane.gpuModel;
+        document.getElementById('hw-vram').textContent = lane.vram ? lane.vram + 'GB VRAM per GPU' : '';
+        document.getElementById('hw-ram').textContent = [lane.hostRam ? lane.hostRam + 'GB host RAM' : '', lane.inferenceRam ? lane.inferenceRam + 'GB inference RAM' : ''].filter(Boolean).join(' / ');
+      } else if (lanes.length > 1) {
+        document.getElementById('hw-gpu').textContent = 'mixed hardware lanes';
+        document.getElementById('hw-vram').textContent = unique(lanes.map((lane) => lane.lane)).join(' / ');
+        document.getElementById('hw-ram').textContent = items.length + ' rows in current filters';
+      } else {
+        document.getElementById('hw-gpu').textContent = 'no matching rows';
+        document.getElementById('hw-vram').textContent = '';
+        document.getElementById('hw-ram').textContent = '';
+      }
+      document.getElementById('hw-updated').textContent = latest
+        ? ('updated ' + new Date(latest).toLocaleString())
+        : 'dataset loaded';
+    };
+
+    const renderSummaries = () => {
+      const buildGroup = (keyPath) => {
+        const map = new Map();
+        for (const item of visibleResults) {
+          const key = get(item, keyPath, 'unknown') || 'unknown';
+          const decode = Number(get(item, 'metrics.decode_tok_s', 0) || 0);
+          const context = Number(get(item, 'serving.context_tokens', get(item, 'benchmark.configured_context_tokens', 0)) || 0);
+          const row = map.get(key) || { key, rows: 0, bestDecode: 0, bestContext: 0 };
+          row.rows += 1;
+          row.bestDecode = Math.max(row.bestDecode, decode);
+          row.bestContext = Math.max(row.bestContext, context);
+          map.set(key, row);
+        }
+        return Array.from(map.values()).sort((a, b) => b.rows - a.rows || b.bestDecode - a.bestDecode);
+      };
+
+      const renderRows = (rows, targetId) => {
+        const target = document.getElementById(targetId);
+        if (!rows.length) {
+          target.innerHTML = '<tr><td colspan="4" class="muted">No rows in current view.</td></tr>';
+          return;
+        }
+        target.innerHTML = rows.slice(0, 10).map((row) => (
+          '<tr>' +
+          '<td>' + escapeHtml(row.key) + '</td>' +
+          '<td class="num">' + row.rows + '</td>' +
+          '<td class="num">' + (row.bestDecode ? formatNumber(row.bestDecode, 1) + ' tok/s' : 'n/a') + '</td>' +
+          '<td class="num">' + (row.bestContext ? formatNumber(row.bestContext, 0) : 'n/a') + '</td>' +
+          '</tr>'
+        )).join('');
+      };
+
+      const engines = buildGroup('runtime.engine');
+      const families = buildGroup('model.family');
+      renderRows(engines, 'engine-summary-body');
+      renderRows(families, 'family-summary-body');
+
+      document.getElementById('engine-summary-meta').textContent = engines.length + ' lane' + (engines.length === 1 ? '' : 's');
+      document.getElementById('family-summary-meta').textContent = families.length + (families.length === 1 ? ' family' : ' families');
+    };
+
+    const applyFilters = () => {
+      const search = document.getElementById('search').value.trim().toLowerCase();
+      const gpu = document.getElementById('gpu-filter').value;
+      const engine = document.getElementById('engine-filter').value;
+      const spec = document.getElementById('spec-filter').value;
+      const thinking = document.getElementById('thinking-filter').value;
+      const family = document.getElementById('family-filter').value;
+      const level = document.getElementById('level-filter').value;
+      const prompt = document.getElementById('prompt-filter').value;
+      const includeArchived = document.getElementById('archived-filter').checked;
+      const showRawRuns = document.getElementById('raw-filter').checked;
+
+      filteredResults = allResults.filter((item) => {
+        const gpuLabel = gpuFilterLabel(item);
+        const itemLevel = get(item, 'promotion_level', '');
+        if (!includeArchived && !level && itemLevel === 'deprecated') return false;
+        if (search && !resultText(item).includes(search)) return false;
+        if (gpu && gpuLabel !== gpu) return false;
+        if (engine && get(item, 'runtime.engine', '') !== engine) return false;
+        if (spec && specLabel(item) !== spec) return false;
+        if (thinking && get(item, 'serving.thinking', 'unknown') !== thinking) return false;
+        if (family && get(item, 'model.family', '') !== family) return false;
+        if (level && itemLevel !== level) return false;
+        if (prompt && get(item, 'benchmark.prompt_set', '') !== prompt) return false;
+        return true;
+      });
+
+      visibleResults = showRawRuns ? filteredResults.map((item) => ({ ...item, _run_count: 1 })) : collapseRepeatedRuns(filteredResults);
+
+      visibleResults.sort((a, b) => {
+        const av = sortValue(a, sortKey);
+        const bv = sortValue(b, sortKey);
+        if (typeof av === 'number' || typeof bv === 'number') return (Number(av || 0) - Number(bv || 0)) * sortDir;
+        return String(av).localeCompare(String(bv)) * sortDir;
+      });
+
+      render();
+    };
+
+    const updateSortHeaders = () => {
+      document.getElementById('sort-label').textContent = document.getElementById('raw-filter').checked
+        ? 'grouped by model/setup, raw repeated runs visible'
+        : 'grouped by model/setup, repeated runs collapsed';
+    };
+
+    const promptRunLabel = (item) => {
+      const runCount = item._run_count || 1;
+      if (runCount > 1) return 'best of ' + runCount;
+      const match = String(item.id || '').match(/-(\d+)$/);
+      return match ? 'run ' + match[1] : '1 run';
+    };
+
+    const renderPromptRows = (rows, maxDecode, maxPrompt) => rows.map((item) => {
+      const prompt = get(item, 'benchmark.prompt_set', 'unknown');
+      const generated = get(item, 'benchmark.generated_tokens', null);
+      const actualPrompt = get(item, 'benchmark.actual_prompt_tokens', null);
+      const caveat = (item.caveats || [get(item, 'benchmark.notes', '')]).filter(Boolean)[0] || '';
+      const runCount = item._run_count || 1;
+      const avgDecode = item._avg_decode_tok_s;
+      const avgPrompt = item._avg_prompt_tok_s;
+      const generationLabel = runCount > 1 && avgDecode ? 'selected ' + formatNumber(get(item, 'metrics.decode_tok_s', null), 1) + ' / avg ' + formatNumber(avgDecode, 1) : formatNumber(get(item, 'metrics.decode_tok_s', null), 1);
+      const promptLabel = runCount > 1 && avgPrompt ? 'same run ' + formatNumber(get(item, 'metrics.prompt_tok_s', null), 1) + ' / avg ' + formatNumber(avgPrompt, 1) : formatNumber(get(item, 'metrics.prompt_tok_s', null), 1);
+      const tokenText = (actualPrompt ? formatNumber(actualPrompt, 0) + ' in' : 'n/a in') + ' / ' + (generated ? formatNumber(generated, 0) + ' out' : 'n/a out');
+      return '<tr>' +
+        '<td data-label="Prompt"><span class="badge">' + escapeHtml(prompt) + '</span></td>' +
+        '<td data-label="Generation tok/s">' + renderBar(get(item, 'metrics.decode_tok_s', null), maxDecode) + '<div class="subline">' + escapeHtml(generationLabel) + '</div></td>' +
+        '<td data-label="Prompt eval tok/s">' + renderBar(get(item, 'metrics.prompt_tok_s', null), maxPrompt) + '<div class="subline">' + escapeHtml(promptLabel) + '</div></td>' +
+        '<td data-label="Tokens" class="num">' + escapeHtml(tokenText) + '</td>' +
+        '<td data-label="Runs"><span class="badge">' + escapeHtml(promptRunLabel(item)) + '</span></td>' +
+        '<td data-label="Caveat" class="muted">' + escapeHtml(caveat) + '</td>' +
+        '</tr>';
+    }).join('');
+
+    const renderModelCard = (group, maxDecode, maxPrompt) => {
+      const item = group.base;
+      const model = get(item, 'model.id', 'unknown');
+      const quant = get(item, 'model.quant', 'unknown');
+      const family = get(item, 'model.family', 'unknown');
+      const engine = get(item, 'runtime.engine', 'unknown');
+      const gpu = get(item, 'hardware.gpu_count', '?') + 'x ' + get(item, 'hardware.gpu_model', 'GPU');
+      const lane = hardwareLaneLabel(item);
+      const context = get(item, 'serving.context_tokens', get(item, 'benchmark.configured_context_tokens', null));
+      const level = get(item, 'promotion_level', 'unknown');
+      const kv = [get(item, 'serving.kv_cache_k', ''), get(item, 'serving.kv_cache_v', '')].filter(Boolean).join('/') || 'KV n/a';
+      const thinking = get(item, 'serving.thinking', 'unknown');
+      const reasoningBudget = get(item, 'serving.reasoning_budget', null);
+      const thinkingLabel = 'thinking ' + thinking + (reasoningBudget !== null && reasoningBudget !== undefined ? ' / budget ' + formatNumber(reasoningBudget, 0) : '');
+      return '<article class="model-card">' +
+        '<div class="model-head">' +
+          '<div class="model-title"><div class="model">' + escapeHtml(model) + '</div><div class="subline">' + escapeHtml(family) + ' / ' + escapeHtml(quant) + '</div></div>' +
+          '<div class="model-tags">' +
+            '<span class="badge engine">' + escapeHtml(engine) + '</span>' +
+            '<span class="badge green">' + escapeHtml(lane) + '</span>' +
+            '<span class="badge">' + escapeHtml(gpu) + '</span>' +
+            '<span class="badge">ctx ' + formatNumber(context, 0) + '</span>' +
+            '<span class="badge">' + escapeHtml(kv) + '</span>' +
+            '<span class="badge blue">' + escapeHtml(specLabel(item)) + '</span>' +
+            '<span class="badge amber">' + escapeHtml(thinkingLabel) + '</span>' +
+            '<span class="badge ' + badgeClass(level) + '">' + escapeHtml(level) + '</span>' +
+          '</div>' +
+          '<div class="model-kpis"><div class="model-kpi"><div class="k">best generation</div><div class="v">' + (group.bestDecode ? formatNumber(group.bestDecode, 1) : 'n/a') + '</div></div><div class="model-kpi"><div class="k">prompt rows</div><div class="v">' + group.rows.length + '</div></div></div>' +
+        '</div>' +
+        '<div class="table-wrap" style="border:0;border-radius:0;">' +
+          '<table class="prompt-table"><thead><tr><th>Prompt</th><th>Generation tok/s</th><th>Prompt eval tok/s</th><th>Tokens</th><th>Runs</th><th>Caveat</th></tr></thead><tbody>' + renderPromptRows(group.rows, maxDecode, maxPrompt) + '</tbody></table>' +
+        '</div>' +
+      '</article>';
+    };
+
+    const render = () => {
+      const body = document.getElementById('results-list');
+      const modelGroups = buildModelCards(visibleResults);
+      buildHardwareLane(filteredResults);
+      const maxDecode = Math.max(1, ...visibleResults.map((item) => Number(get(item, 'metrics.decode_tok_s', 0) || 0)));
+      const maxPrompt = Math.max(1, ...visibleResults.map((item) => Number(get(item, 'metrics.prompt_tok_s', 0) || 0)));
+      if (!modelGroups.length) {
+        body.innerHTML = '<div class="model-card"><div class="model-head"><div class="muted">No rows match the current filters. Clear the search or broaden the selected filters.</div></div></div>';
+      } else {
+        body.innerHTML = modelGroups.map((group) => renderModelCard(group, maxDecode, maxPrompt)).join('');
+      }
+
+      document.getElementById('metric-visible').textContent = modelGroups.length;
+      document.getElementById('metric-total').textContent = allResults.length + ' raw runs loaded';
+      document.getElementById('metric-raw-visible').textContent = filteredResults.length;
+      document.getElementById('metric-mtp').textContent = modelGroups.filter((group) => specLabel(group.base) !== 'no MTP').length;
+      document.getElementById('metric-archived').textContent = allResults.filter((item) => get(item, 'promotion_level', '') === 'deprecated').length;
+      const maxContext = Math.max(0, ...visibleResults.map((item) => Number(get(item, 'serving.context_tokens', get(item, 'benchmark.configured_context_tokens', 0)) || 0)));
+      document.getElementById('metric-context').textContent = maxContext ? formatNumber(maxContext, 0) : 'n/a';
+      const bestDecode = Math.max(0, ...visibleResults.map((item) => Number(get(item, 'metrics.decode_tok_s', 0) || 0)));
+      document.getElementById('metric-best-decode').textContent = bestDecode ? formatNumber(bestDecode, 1) : 'n/a';
+      updateSortHeaders();
+      document.getElementById('mode-note').textContent = document.getElementById('raw-filter').checked
+        ? 'Raw run view: model cards show every repeated measurement as separate prompt rows.'
+        : 'Default view: model cards show one selected row per prompt, with averages and run count visible.';
+
+      const prompts = unique(visibleResults.map((item) => get(item, 'benchmark.prompt_set', '')));
+      const contexts = unique(visibleResults.map((item) => String(get(item, 'serving.context_tokens', get(item, 'benchmark.configured_context_tokens', '')))));
+      const engines = unique(visibleResults.map((item) => get(item, 'runtime.engine', '')));
+      const note = document.getElementById('compare-note');
+      if (!visibleResults.length) {
+        note.style.borderLeftColor = 'var(--red)';
+        note.textContent = 'No rows match the current filters.';
+      } else if (prompts.length === 1 && contexts.length === 1 && engines.length === 1) {
+        note.style.borderLeftColor = 'var(--green)';
+        note.textContent = 'Strict lane: same engine, prompt set, and configured context across visible model cards.';
+      } else {
+        note.style.borderLeftColor = 'var(--amber)';
+        note.textContent = 'Grouped model view: each card keeps one model/setup together. Filter by prompt, engine, and context before treating speeds as a strict comparison.';
+      }
+
+      renderSummaries();
+    };
+
+    const boot = async () => {
+      const response = await fetch(DATA_URL);
+      if (!response.ok) throw new Error('HTTP ' + response.status + ' loading ' + DATA_URL);
+      const data = await response.json();
+      allResults = data.results || [];
+
+      fillSelect('gpu-filter', 'all hardware', unique(allResults.map((item) => gpuFilterLabel(item))));
+      fillSelect('engine-filter', 'all engines', unique(allResults.map((item) => get(item, 'runtime.engine', ''))));
+      fillSelect('spec-filter', 'all MTP/spec', unique(allResults.map((item) => specLabel(item))));
+      fillSelect('thinking-filter', 'all thinking', unique(allResults.map((item) => get(item, 'serving.thinking', 'unknown'))));
+      fillSelect('family-filter', 'all families', unique(allResults.map((item) => get(item, 'model.family', ''))));
+      fillSelect('level-filter', 'all levels', unique(allResults.map((item) => get(item, 'promotion_level', ''))));
+      fillSelect('prompt-filter', 'all prompts', unique(allResults.map((item) => get(item, 'benchmark.prompt_set', ''))));
+
+      document.querySelectorAll('input, select').forEach((element) => element.addEventListener('input', applyFilters));
+      document.getElementById('archived-filter').addEventListener('change', applyFilters);
+      document.getElementById('raw-filter').addEventListener('change', applyFilters);
+      const sortByHeader = (header) => {
+        const next = header.getAttribute('data-sort');
+        if (next === sortKey) sortDir *= -1;
+        else {
+          sortKey = next;
+          sortDir = next === 'decode' || next === 'prompt_speed' || next === 'context' ? -1 : 1;
+        }
+        applyFilters();
+      };
+
+      document.querySelectorAll('th[data-sort]').forEach((header) => {
+        header.addEventListener('click', () => {
+          sortByHeader(header);
+        });
+        header.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            sortByHeader(header);
+          }
+        });
+      });
+      window.addEventListener('resize', updateSortHeaders);
+
+      applyFilters();
+    };
+
+    boot().catch((error) => {
+      document.getElementById('results-list').innerHTML = '<div class="model-card"><div class="model-head"><div>Failed to load site data: ' + escapeHtml(error.message || error) + '</div></div></div>';
+      document.getElementById('engine-summary-body').innerHTML = '<tr><td colspan="4" class="muted">No data.</td></tr>';
+      document.getElementById('family-summary-body').innerHTML = '<tr><td colspan="4" class="muted">No data.</td></tr>';
+    });
+  </script>
+</body>
+</html>

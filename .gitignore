@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+*.log
+*.jsonl
+bench-out/
+results-local/
+.DS_Store
+

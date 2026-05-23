@@ -1,0 +1,462 @@
+#!/usr/bin/env python3
+import argparse
+import json
+import os
+import re
+import time
+import urllib.error
+import urllib.request
+from datetime import datetime, timezone
+from pathlib import Path
+
+
+PROMPTS = {
+    "short-chat": {
+        "max_tokens": 256,
+        "text": "Write a practical checklist for validating a local OpenAI-compatible LLM server. Keep it concise.",
+    },
+    "code-generate": {
+        "max_tokens": 768,
+        "text": (
+            "Write a Python module that validates benchmark result dictionaries for required keys, "
+            "normalizes model names into URL-safe slugs, and prints a compact summary table. "
+            "Include type hints and a small __main__ example."
+        ),
+    },
+    "agent-tool": {
+        "max_tokens": 512,
+        "text": (
+            "You are reviewing a local LLM benchmark report for publication. "
+            "Tool output: GPU0 AMD Radeon RX 6900 XT 16GB, ROCm 7.2, gfx1030, "
+            "runtime llama.cpp, model Qwen3.6 27B GGUF, q8 KV, draft-MTP enabled. "
+            "List the missing details that must be captured before this result can be compared publicly."
+        ),
+    },
+    "long-retrieval": {
+        "max_tokens": 96,
+        "text": (
+            "You are checking retrieval from a long synthetic context. "
+            "Remember this key exactly: CLUB-RDNA16-NEEDLE-194.\n\n"
+            + ("Filler block: local inference benchmark notes need hardware, ROCm/HIP runtime, model, quant, context, KV cache, generated tokens, and caveats.\n" * 900)
+            + "\nQuestion: what exact key were you told to remember? Reply with only the key."
+        ),
+    },
+}
+
+SOURCE_TYPES = {"seed", "community", "imported", "external"}
+HARDWARE_LANES = {"1x-rdna16", "2x-rdna16", "multi-rdna16", "other-radeon-16gb", "other-amd", "unknown"}
+
+
+def slugify(value):
+    value = value.lower()
+    value = re.sub(r"[^a-z0-9._-]+", "-", value)
+    value = value.strip("-")
+    return value or "result"
+
+
+def post_json(url, payload, timeout, api_key=None):
+    data = json.dumps(payload).encode("utf-8")
+    headers = {"content-type": "application/json"}
+    if api_key:
+        headers["authorization"] = f"Bearer {api_key}"
+    req = urllib.request.Request(
+        url,
+        data=data,
+        headers=headers,
+        method="POST",
+    )
+    with urllib.request.urlopen(req, timeout=timeout) as response:
+        return json.loads(response.read().decode("utf-8"))
+
+
+def get_json(url, timeout, api_key=None):
+    headers = {}
+    if api_key:
+        headers["authorization"] = f"Bearer {api_key}"
+    req = urllib.request.Request(url, headers=headers)
+    with urllib.request.urlopen(req, timeout=timeout) as response:
+        return json.loads(response.read().decode("utf-8"))
+
+
+def maybe_model_status(base_url, model_id, api_key=None):
+    try:
+        models = get_json(f"{base_url.rstrip('/')}/models", 30, api_key)
+    except Exception:
+        return None
+    for item in models.get("data", []):
+        if item.get("id") == model_id:
+            return item.get("status")
+    return None
+
+
+def infer_family(model_id):
+    if "Qwen3.6" in model_id:
+        return "Qwen3.6"
+    if "Qwen3.5" in model_id:
+        return "Qwen3.5"
+    if "Gemma4" in model_id or "Gemma 4" in model_id:
+        return "Gemma4"
+    return "unknown"
+
+
+def infer_hardware_lane(gpu_count, gpu_model):
+    model = (gpu_model or "").lower()
+    is_amd = any(token in model for token in ["radeon", "rx ", "amd"])
+    looks_16gb = any(token in model for token in ["6900", "6950", "7800", "7900", "9070", "9060"]) or "16gb" in model or "16 gb" in model
+    if is_amd and looks_16gb and gpu_count == 1:
+        return "1x-rdna16"
+    if is_amd and looks_16gb and gpu_count == 2:
+        return "2x-rdna16"
+    if is_amd and looks_16gb and gpu_count and gpu_count >= 3:
+        return "multi-rdna16"
+    if is_amd and looks_16gb:
+        return "other-radeon-16gb"
+    if is_amd:
+        return "other-amd"
+    return "unknown"
+
+
+def infer_quant(status):
+    if not status:
+        return "unknown"
+    args = status.get("args") or []
+    model_path = ""
+    for index, value in enumerate(args):
+        if value in {"--model", "-m"} and index + 1 < len(args):
+            model_path = args[index + 1]
+            break
+    basename = model_path.rsplit("/", 1)[-1]
+    matches = re.findall(r"(UD-[A-Z0-9_]+|IQ[0-9]_[A-Z0-9_]+|Q[0-9]_[A-Z0-9_]+|Q[0-9]_K_[A-Z]+)", basename)
+    return matches[-1] if matches else "unknown"
+
+
+def arg_after(args, *names):
+    for index, value in enumerate(args):
+        if value in names and index + 1 < len(args):
+            return args[index + 1]
+    return None
+
+
+def positive_int_or_none(value):
+    if value is None:
+        return None
+    try:
+        parsed = int(value)
+    except (TypeError, ValueError):
+        return None
+    return parsed if parsed > 0 else None
+
+
+def status_arg(status, *names):
+    return arg_after((status or {}).get("args") or [], *names)
+
+
+def status_reasoning_enabled(status):
+    return status_arg(status, "--reasoning") == "on"
+
+
+def status_reasoning_budget(status):
+    return positive_int_or_none(status_arg(status, "--reasoning-budget"))
+
+
+def request_max_tokens(prompt_config, status, args):
+    target_tokens = prompt_config["max_tokens"]
+    reasoning_budget = args.reasoning_budget or status_reasoning_budget(status)
+    thinking_enabled = not args.no_thinking and (args.thinking == "on" or status_reasoning_enabled(status))
+    if thinking_enabled and reasoning_budget:
+        return target_tokens + reasoning_budget
+    return target_tokens
+
+
+def sanitize_public_text(value):
+    if not isinstance(value, str):
+        return value
+    cleaned = value
+    cleaned = re.sub(r"(Bearer )([A-Za-z0-9._-]{10,})", r"\1<redacted>", cleaned)
+    cleaned = re.sub(r"(hf_|sk-)([A-Za-z0-9._-]{10,})", r"\1<redacted>", cleaned)
+    cleaned = re.sub(r"\b(192\.168|10\.[0-9]{1,3}|172\.(1[6-9]|2[0-9]|3[0-1]))(\.[0-9]{1,3}){2}\b", "<private-ip>", cleaned)
+    cleaned = re.sub(r"https?://[^\s/]+", "https://<redacted-host>", cleaned)
+    cleaned = re.sub(r"/(home|Users|root)/[^\s'\\\"]+", "/<redacted-path>", cleaned)
+    return cleaned
+
+
+def write_report(path, result_json_path, results):
+    lines = [
+        "# club-rdna16 result report",
+        "",
+        f"Generated: {datetime.now(timezone.utc).isoformat()}",
+        "",
+        "## Submission Checklist",
+        "",
+        "- Removed private IPs, hostnames, tokens, and personal paths from launch/config text.",
+        "- Included exact runtime, model, quant, context, KV cache, and caveats.",
+        "- Kept benchmark JSON attached for schema validation.",
+        "",
+        "## Result JSON",
+        "",
+        f"- File: {Path(result_json_path).name}",
+        f"- Result count: {len(results)}",
+        "",
+        "## Benchmark Summary",
+        "",
+        "| model | prompt_set | generated_tokens | decode_tok_s | end_to_end_tok_s | wall_seconds |",
+        "| --- | --- | ---: | ---: | ---: | ---: |",
+    ]
+
+    for item in results:
+        model_id = item.get("model", {}).get("id", "unknown")
+        prompt_set = item.get("benchmark", {}).get("prompt_set", "unknown")
+        generated_tokens = item.get("benchmark", {}).get("generated_tokens", "")
+        metrics = item.get("metrics", {})
+        decode = metrics.get("decode_tok_s", "")
+        end_to_end = metrics.get("end_to_end_tok_s", "")
+        wall_seconds = metrics.get("wall_seconds", "")
+        lines.append(
+            f"| {model_id} | {prompt_set} | {generated_tokens} | {decode} | {end_to_end} | {wall_seconds} |"
+        )
+
+    lines.extend(
+        [
+            "",
+            "## Hardware",
+            "",
+            "- Hardware lane:",
+            "- GPU(s):",
+            "- VRAM per GPU:",
+            "- Driver:",
+            "- CPU:",
+            "- Host RAM:",
+            "- Inference/container RAM:",
+            "- Motherboard/system:",
+            "- PCIe layout/link width:",
+            "- OS/container:",
+            "",
+            "## Runtime Settings",
+            "",
+            "- Runtime/version/commit:",
+            "- Launch command/config (sanitized):",
+            "- Context length:",
+            "- KV cache:",
+        "- GPU layers / split mode:",
+            "- MTP/speculative settings:",
+            "- Thinking/reasoning enabled:",
+            "- Notes/warnings:",
+            "",
+        ]
+    )
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("\n".join(lines), encoding="utf-8")
+
+
+def build_result(args, model_id, status, prompt_set, run_index, response, elapsed):
+    usage = response.get("usage") or {}
+    timings = response.get("timings") or {}
+    status_args = (status or {}).get("args") or []
+    prompt_tokens = usage.get("prompt_tokens")
+    completion_tokens = usage.get("completion_tokens")
+    predicted_per_second = timings.get("predicted_per_second")
+    prompt_per_second = timings.get("prompt_per_second")
+    context_tokens = positive_int_or_none(arg_after(status_args, "--ctx-size", "-c") or args.context_tokens)
+    batch_size = positive_int_or_none(arg_after(status_args, "--batch-size", "-b") or args.batch_size)
+    ubatch_size = positive_int_or_none(arg_after(status_args, "--ubatch-size", "-ub") or args.ubatch_size)
+    draft_n = positive_int_or_none(arg_after(status_args, "--spec-draft-n-max") or args.draft_n)
+
+    quant = args.quant or infer_quant(status)
+    result_id = "-".join(
+        [
+            slugify(args.run_id),
+            slugify(model_id),
+            slugify(prompt_set),
+            str(run_index + 1),
+        ]
+    )
+
+    return strip_nones({
+        "schema_version": "1.0",
+        "id": result_id,
+        "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+        "source": {
+            "type": args.source_type,
+            "label": args.source_label,
+            "notes": "Generated by scripts/run_openai_bench.py",
+        },
+        "promotion_level": "benchmark",
+        "hardware": {
+            "lane": args.hardware_lane or infer_hardware_lane(args.gpu_count, args.gpu_model),
+            "gpu_count": args.gpu_count,
+            "gpu_model": args.gpu_model,
+            "vram_per_gpu_gb": args.vram_per_gpu_gb,
+            "driver": args.driver,
+            "cpu": args.cpu,
+            "host_ram_gb": args.host_ram_gb,
+            "inference_ram_gb": args.inference_ram_gb,
+            "pcie": args.pcie,
+            "notes": args.hardware_notes,
+        },
+        "runtime": {
+            "engine": args.engine,
+            "version": args.runtime_version,
+            "commit": args.runtime_commit,
+            "notes": args.runtime_notes,
+        },
+        "model": {
+            "id": model_id,
+            "family": args.family or infer_family(model_id),
+            "architecture": args.architecture,
+            "parameter_class": args.parameter_class,
+            "quant": quant,
+            "source": args.model_source,
+            "notes": args.model_notes,
+        },
+        "serving": {
+            "route": "server",
+            "context_tokens": context_tokens,
+            "batch_size": batch_size,
+            "ubatch_size": ubatch_size,
+            "kv_cache_k": arg_after(status_args, "--cache-type-k") or args.kv_cache_k,
+            "kv_cache_v": arg_after(status_args, "--cache-type-v") or args.kv_cache_v,
+            "tensor_parallel": arg_after(status_args, "--tensor-split", "-ts") or args.tensor_parallel,
+            "speculation": {
+                "type": arg_after(status_args, "--spec-type") or args.speculation_type,
+                "draft_n": draft_n,
+                "notes": args.speculation_notes,
+            },
+            "thinking": args.thinking,
+            "reasoning_budget": args.reasoning_budget or status_reasoning_budget(status),
+            "notes": args.serving_notes,
+        },
+        "benchmark": {
+            "prompt_set": prompt_set,
+            "configured_context_tokens": context_tokens,
+            "actual_prompt_tokens": prompt_tokens,
+            "generated_tokens": completion_tokens,
+            "runs": 1,
+            "warmups": args.warmups,
+            "stream": False,
+            "notes": args.benchmark_notes,
+        },
+        "metrics": {
+            "prompt_tok_s": prompt_per_second,
+            "decode_tok_s": predicted_per_second,
+            "end_to_end_tok_s": round(completion_tokens / elapsed, 3) if completion_tokens else None,
+            "wall_seconds": round(elapsed, 3),
+        },
+        "caveats": args.caveat,
+    })
+
+
+def strip_nones(value):
+    if isinstance(value, dict):
+        return {key: strip_nones(item) for key, item in value.items() if item is not None and item != ""}
+    if isinstance(value, list):
+        return [strip_nones(item) for item in value if item is not None and item != ""]
+    return value
+
+
+def run_prompt(base_url, model_id, prompt_set, prompt_config, args, status):
+    payload = {
+        "model": model_id,
+        "messages": [{"role": "user", "content": prompt_config["text"]}],
+        "temperature": args.temperature,
+        "max_tokens": request_max_tokens(prompt_config, status, args),
+        "stream": False,
+    }
+    if args.no_thinking:
+        payload["chat_template_kwargs"] = {"enable_thinking": False}
+
+    started = time.monotonic()
+    response = post_json(f"{base_url.rstrip('/')}/chat/completions", payload, args.timeout, args.api_key)
+    elapsed = time.monotonic() - started
+    return response, elapsed
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Run protocol-shaped OpenAI-compatible benchmark prompts.")
+    parser.add_argument("--base-url", default="http://127.0.0.1:8080/v1")
+    parser.add_argument("--api-key", default=os.environ.get("LLAMA_API_KEY", ""))
+    parser.add_argument("--model", action="append", required=True)
+    parser.add_argument("--prompt-set", action="append", choices=sorted(PROMPTS), default=None)
+    parser.add_argument("--runs", type=int, default=1)
+    parser.add_argument("--warmups", type=int, default=1)
+    parser.add_argument("--timeout", type=int, default=900)
+    parser.add_argument("--temperature", type=float, default=0.0)
+    parser.add_argument("--no-thinking", action="store_true")
+    parser.add_argument("--output", required=True)
+    parser.add_argument("--report-output", default="", help="Optional markdown report output path")
+    parser.add_argument("--run-id", default=datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S"))
+    parser.add_argument("--source-type", default="community", choices=sorted(SOURCE_TYPES))
+    parser.add_argument("--source-label", default="community-rdna16")
+    parser.add_argument("--gpu-count", type=int, default=1)
+    parser.add_argument("--hardware-lane", default="", choices=[""] + sorted(HARDWARE_LANES))
+    parser.add_argument("--gpu-model", default="AMD Radeon RX 6900 XT")
+    parser.add_argument("--vram-per-gpu-gb", type=float, default=16)
+    parser.add_argument("--driver", default="")
+    parser.add_argument("--cpu", default="")
+    parser.add_argument("--host-ram-gb", type=float, default=None)
+    parser.add_argument("--inference-ram-gb", type=float, default=None)
+    parser.add_argument("--pcie", default="")
+    parser.add_argument("--hardware-notes", default="")
+    parser.add_argument("--engine", default="llama.cpp", choices=["llama.cpp", "ik_llama.cpp", "BeeLlama", "vLLM", "SGLang", "other"])
+    parser.add_argument("--runtime-version", default="")
+    parser.add_argument("--runtime-commit", default="")
+    parser.add_argument("--runtime-notes", default="")
+    parser.add_argument("--family", default="")
+    parser.add_argument("--architecture", default="unknown", choices=["dense", "moe", "hybrid", "unknown"])
+    parser.add_argument("--parameter-class", default="")
+    parser.add_argument("--quant", default="")
+    parser.add_argument("--model-source", default="")
+    parser.add_argument("--model-notes", default="")
+    parser.add_argument("--context-tokens", type=int, default=8192)
+    parser.add_argument("--batch-size", type=int, default=0)
+    parser.add_argument("--ubatch-size", type=int, default=0)
+    parser.add_argument("--kv-cache-k", default="unknown")
+    parser.add_argument("--kv-cache-v", default="unknown")
+    parser.add_argument("--tensor-parallel", default="")
+    parser.add_argument("--speculation-type", default="none")
+    parser.add_argument("--draft-n", type=int, default=0)
+    parser.add_argument("--speculation-notes", default="")
+    parser.add_argument("--thinking", default="unknown", choices=["on", "off", "unknown"])
+    parser.add_argument("--reasoning-budget", type=int, default=0, help="Add this token budget to prompt-set output caps when thinking is on")
+    parser.add_argument("--serving-notes", default="")
+    parser.add_argument("--benchmark-notes", default="")
+    parser.add_argument("--caveat", action="append", default=[])
+    args = parser.parse_args()
+
+    if args.source_type == "community":
+        for name in [
+            "source_label",
+            "hardware_notes",
+            "runtime_notes",
+            "model_notes",
+            "serving_notes",
+            "benchmark_notes",
+        ]:
+            setattr(args, name, sanitize_public_text(getattr(args, name)))
+        args.caveat = [sanitize_public_text(item) for item in args.caveat]
+
+    prompt_sets = args.prompt_set or ["short-chat", "code-generate", "agent-tool"]
+    results = []
+
+    for model_id in args.model:
+        status = maybe_model_status(args.base_url, model_id, args.api_key)
+        for prompt_set in prompt_sets:
+            prompt_config = PROMPTS[prompt_set]
+            for _ in range(args.warmups):
+                run_prompt(args.base_url, model_id, prompt_set, prompt_config, args, status)
+            for run_index in range(args.runs):
+                response, elapsed = run_prompt(args.base_url, model_id, prompt_set, prompt_config, args, status)
+                results.append(build_result(args, model_id, status, prompt_set, run_index, response, elapsed))
+
+    output = Path(args.output)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps({"results": results}, indent=2) + "\n", encoding="utf-8")
+    print(f"wrote {len(results)} result(s) to {output}")
+    if args.report_output:
+        report_output = Path(args.report_output)
+        write_report(report_output, output, results)
+        print(f"wrote report template to {report_output}")
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

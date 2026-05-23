@@ -1,0 +1,276 @@
+{
+  "schema": "club-rdna16.fit-matrix.v1",
+  "timestamp_utc": "2026-05-23T00:26:59.689002+00:00",
+  "results": [
+    {
+      "context_tokens": 65536,
+      "kv_cache": "q8_0",
+      "returncode": 0,
+      "fit": "-c 65536 -ngl -1",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-27B-MTP-GGUF/Qwen3.6-27B-UD-IQ3_XXS.gguf -c 65536 -b 1024 -ub 512 -fa on -ctk q8_0 -ctv q8_0",
+      "model": "qwen36-27b-iq3xxs"
+    },
+    {
+      "context_tokens": 65536,
+      "kv_cache": "q5_1",
+      "returncode": 0,
+      "fit": "-c 65536 -ngl -1",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-27B-MTP-GGUF/Qwen3.6-27B-UD-IQ3_XXS.gguf -c 65536 -b 1024 -ub 512 -fa on -ctk q5_1 -ctv q5_1",
+      "model": "qwen36-27b-iq3xxs"
+    },
+    {
+      "context_tokens": 65536,
+      "kv_cache": "q4_0",
+      "returncode": 0,
+      "fit": "-c 65536 -ngl -1",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-27B-MTP-GGUF/Qwen3.6-27B-UD-IQ3_XXS.gguf -c 65536 -b 1024 -ub 512 -fa on -ctk q4_0 -ctv q4_0",
+      "model": "qwen36-27b-iq3xxs"
+    },
+    {
+      "context_tokens": 102400,
+      "kv_cache": "q8_0",
+      "returncode": 0,
+      "fit": "-c 102400 -ngl 64",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-27B-MTP-GGUF/Qwen3.6-27B-UD-IQ3_XXS.gguf -c 102400 -b 1024 -ub 512 -fa on -ctk q8_0 -ctv q8_0",
+      "model": "qwen36-27b-iq3xxs"
+    },
+    {
+      "context_tokens": 102400,
+      "kv_cache": "q5_1",
+      "returncode": 0,
+      "fit": "-c 102400 -ngl -1",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-27B-MTP-GGUF/Qwen3.6-27B-UD-IQ3_XXS.gguf -c 102400 -b 1024 -ub 512 -fa on -ctk q5_1 -ctv q5_1",
+      "model": "qwen36-27b-iq3xxs"
+    },
+    {
+      "context_tokens": 102400,
+      "kv_cache": "q4_0",
+      "returncode": 0,
+      "fit": "-c 102400 -ngl -1",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-27B-MTP-GGUF/Qwen3.6-27B-UD-IQ3_XXS.gguf -c 102400 -b 1024 -ub 512 -fa on -ctk q4_0 -ctv q4_0",
+      "model": "qwen36-27b-iq3xxs"
+    },
+    {
+      "context_tokens": 131072,
+      "kv_cache": "q8_0",
+      "returncode": 0,
+      "fit": "-c 131072 -ngl 59",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-27B-MTP-GGUF/Qwen3.6-27B-UD-IQ3_XXS.gguf -c 131072 -b 1024 -ub 512 -fa on -ctk q8_0 -ctv q8_0",
+      "model": "qwen36-27b-iq3xxs"
+    },
+    {
+      "context_tokens": 131072,
+      "kv_cache": "q5_1",
+      "returncode": 0,
+      "fit": "-c 131072 -ngl -1",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-27B-MTP-GGUF/Qwen3.6-27B-UD-IQ3_XXS.gguf -c 131072 -b 1024 -ub 512 -fa on -ctk q5_1 -ctv q5_1",
+      "model": "qwen36-27b-iq3xxs"
+    },
+    {
+      "context_tokens": 131072,
+      "kv_cache": "q4_0",
+      "returncode": 0,
+      "fit": "-c 131072 -ngl -1",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-27B-MTP-GGUF/Qwen3.6-27B-UD-IQ3_XXS.gguf -c 131072 -b 1024 -ub 512 -fa on -ctk q4_0 -ctv q4_0",
+      "model": "qwen36-27b-iq3xxs"
+    },
+    {
+      "context_tokens": 204800,
+      "kv_cache": "q8_0",
+      "returncode": 0,
+      "fit": "-c 204800 -ngl 50",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-27B-MTP-GGUF/Qwen3.6-27B-UD-IQ3_XXS.gguf -c 204800 -b 1024 -ub 512 -fa on -ctk q8_0 -ctv q8_0",
+      "model": "qwen36-27b-iq3xxs"
+    },
+    {
+      "context_tokens": 204800,
+      "kv_cache": "q5_1",
+      "returncode": 0,
+      "fit": "-c 204800 -ngl 58",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-27B-MTP-GGUF/Qwen3.6-27B-UD-IQ3_XXS.gguf -c 204800 -b 1024 -ub 512 -fa on -ctk q5_1 -ctv q5_1",
+      "model": "qwen36-27b-iq3xxs"
+    },
+    {
+      "context_tokens": 204800,
+      "kv_cache": "q4_0",
+      "returncode": 0,
+      "fit": "-c 204800 -ngl 62",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-27B-MTP-GGUF/Qwen3.6-27B-UD-IQ3_XXS.gguf -c 204800 -b 1024 -ub 512 -fa on -ctk q4_0 -ctv q4_0",
+      "model": "qwen36-27b-iq3xxs"
+    },
+    {
+      "context_tokens": 262144,
+      "kv_cache": "q8_0",
+      "returncode": 0,
+      "fit": "-c 262144 -ngl 43",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-27B-MTP-GGUF/Qwen3.6-27B-UD-IQ3_XXS.gguf -c 262144 -b 1024 -ub 512 -fa on -ctk q8_0 -ctv q8_0",
+      "model": "qwen36-27b-iq3xxs"
+    },
+    {
+      "context_tokens": 262144,
+      "kv_cache": "q5_1",
+      "returncode": 0,
+      "fit": "-c 262144 -ngl 52",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-27B-MTP-GGUF/Qwen3.6-27B-UD-IQ3_XXS.gguf -c 262144 -b 1024 -ub 512 -fa on -ctk q5_1 -ctv q5_1",
+      "model": "qwen36-27b-iq3xxs"
+    },
+    {
+      "context_tokens": 262144,
+      "kv_cache": "q4_0",
+      "returncode": 0,
+      "fit": "-c 262144 -ngl 56",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-27B-MTP-GGUF/Qwen3.6-27B-UD-IQ3_XXS.gguf -c 262144 -b 1024 -ub 512 -fa on -ctk q4_0 -ctv q4_0",
+      "model": "qwen36-27b-iq3xxs"
+    },
+    {
+      "context_tokens": 65536,
+      "kv_cache": "q8_0",
+      "returncode": 0,
+      "fit": "-c 65536 -ngl -1",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-35B-A3B-MTP-GGUF/Qwen3.6-35B-A3B-UD-IQ3_XXS.gguf -c 65536 -b 1024 -ub 512 -fa on -ctk q8_0 -ctv q8_0",
+      "model": "qwen36-35b-a3b-iq3xxs"
+    },
+    {
+      "context_tokens": 65536,
+      "kv_cache": "q5_1",
+      "returncode": 0,
+      "fit": "-c 65536 -ngl -1",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-35B-A3B-MTP-GGUF/Qwen3.6-35B-A3B-UD-IQ3_XXS.gguf -c 65536 -b 1024 -ub 512 -fa on -ctk q5_1 -ctv q5_1",
+      "model": "qwen36-35b-a3b-iq3xxs"
+    },
+    {
+      "context_tokens": 65536,
+      "kv_cache": "q4_0",
+      "returncode": 0,
+      "fit": "-c 65536 -ngl -1",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-35B-A3B-MTP-GGUF/Qwen3.6-35B-A3B-UD-IQ3_XXS.gguf -c 65536 -b 1024 -ub 512 -fa on -ctk q4_0 -ctv q4_0",
+      "model": "qwen36-35b-a3b-iq3xxs"
+    },
+    {
+      "context_tokens": 102400,
+      "kv_cache": "q8_0",
+      "returncode": 0,
+      "fit": "-c 102400 -ngl -1",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-35B-A3B-MTP-GGUF/Qwen3.6-35B-A3B-UD-IQ3_XXS.gguf -c 102400 -b 1024 -ub 512 -fa on -ctk q8_0 -ctv q8_0",
+      "model": "qwen36-35b-a3b-iq3xxs"
+    },
+    {
+      "context_tokens": 102400,
+      "kv_cache": "q5_1",
+      "returncode": 0,
+      "fit": "-c 102400 -ngl -1",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-35B-A3B-MTP-GGUF/Qwen3.6-35B-A3B-UD-IQ3_XXS.gguf -c 102400 -b 1024 -ub 512 -fa on -ctk q5_1 -ctv q5_1",
+      "model": "qwen36-35b-a3b-iq3xxs"
+    },
+    {
+      "context_tokens": 102400,
+      "kv_cache": "q4_0",
+      "returncode": 0,
+      "fit": "-c 102400 -ngl -1",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-35B-A3B-MTP-GGUF/Qwen3.6-35B-A3B-UD-IQ3_XXS.gguf -c 102400 -b 1024 -ub 512 -fa on -ctk q4_0 -ctv q4_0",
+      "model": "qwen36-35b-a3b-iq3xxs"
+    },
+    {
+      "context_tokens": 131072,
+      "kv_cache": "q8_0",
+      "returncode": 0,
+      "fit": "-c 131072 -ngl -1",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-35B-A3B-MTP-GGUF/Qwen3.6-35B-A3B-UD-IQ3_XXS.gguf -c 131072 -b 1024 -ub 512 -fa on -ctk q8_0 -ctv q8_0",
+      "model": "qwen36-35b-a3b-iq3xxs"
+    },
+    {
+      "context_tokens": 131072,
+      "kv_cache": "q5_1",
+      "returncode": 0,
+      "fit": "-c 131072 -ngl -1",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-35B-A3B-MTP-GGUF/Qwen3.6-35B-A3B-UD-IQ3_XXS.gguf -c 131072 -b 1024 -ub 512 -fa on -ctk q5_1 -ctv q5_1",
+      "model": "qwen36-35b-a3b-iq3xxs"
+    },
+    {
+      "context_tokens": 131072,
+      "kv_cache": "q4_0",
+      "returncode": 0,
+      "fit": "-c 131072 -ngl -1",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-35B-A3B-MTP-GGUF/Qwen3.6-35B-A3B-UD-IQ3_XXS.gguf -c 131072 -b 1024 -ub 512 -fa on -ctk q4_0 -ctv q4_0",
+      "model": "qwen36-35b-a3b-iq3xxs"
+    },
+    {
+      "context_tokens": 204800,
+      "kv_cache": "q8_0",
+      "returncode": 0,
+      "fit": "-c 204800 -ngl 42 -ot \"blk\\.38\\.ffn_(gate|gate_up|down).*=CPU,blk\\.39\\.ffn_(up|down|gate_up|gate)_(ch|)exps=CPU,blk\\.40\\.ffn_(up|down|gate_up|gate)_(ch|)exps=CPU,blk\\.41\\.ffn_(up|down|gate_up|gate)_(ch|)exps=CPU\"",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-35B-A3B-MTP-GGUF/Qwen3.6-35B-A3B-UD-IQ3_XXS.gguf -c 204800 -b 1024 -ub 512 -fa on -ctk q8_0 -ctv q8_0",
+      "model": "qwen36-35b-a3b-iq3xxs"
+    },
+    {
+      "context_tokens": 204800,
+      "kv_cache": "q5_1",
+      "returncode": 0,
+      "fit": "-c 204800 -ngl 42 -ot \"blk\\.40\\.ffn_(gate|gate_up|down).*=CPU,blk\\.41\\.ffn_(up|down|gate_up|gate)_(ch|)exps=CPU\"",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-35B-A3B-MTP-GGUF/Qwen3.6-35B-A3B-UD-IQ3_XXS.gguf -c 204800 -b 1024 -ub 512 -fa on -ctk q5_1 -ctv q5_1",
+      "model": "qwen36-35b-a3b-iq3xxs"
+    },
+    {
+      "context_tokens": 204800,
+      "kv_cache": "q4_0",
+      "returncode": 0,
+      "fit": "-c 204800 -ngl -1",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-35B-A3B-MTP-GGUF/Qwen3.6-35B-A3B-UD-IQ3_XXS.gguf -c 204800 -b 1024 -ub 512 -fa on -ctk q4_0 -ctv q4_0",
+      "model": "qwen36-35b-a3b-iq3xxs"
+    },
+    {
+      "context_tokens": 262144,
+      "kv_cache": "q8_0",
+      "returncode": 0,
+      "fit": "-c 262144 -ngl 42 -ot \"blk\\.35\\.ffn_down.*=CPU,blk\\.36\\.ffn_(up|down|gate_up|gate)_(ch|)exps=CPU,blk\\.37\\.ffn_(up|down|gate_up|gate)_(ch|)exps=CPU,blk\\.38\\.ffn_(up|down|gate_up|gate)_(ch|)exps=CPU,blk\\.39\\.ffn_(up|down|gate_up|gate)_(ch|)exps=CPU,blk\\.40\\.ffn_(up|down|gate_up|gate)_(ch|)exps=CPU,blk\\.41\\.ffn_(up|down|gate_up|gate)_(ch|)exps=CPU\"",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-35B-A3B-MTP-GGUF/Qwen3.6-35B-A3B-UD-IQ3_XXS.gguf -c 262144 -b 1024 -ub 512 -fa on -ctk q8_0 -ctv q8_0",
+      "model": "qwen36-35b-a3b-iq3xxs"
+    },
+    {
+      "context_tokens": 262144,
+      "kv_cache": "q5_1",
+      "returncode": 0,
+      "fit": "-c 262144 -ngl 42 -ot \"blk\\.38\\.ffn_down.*=CPU,blk\\.39\\.ffn_(up|down|gate_up|gate)_(ch|)exps=CPU,blk\\.40\\.ffn_(up|down|gate_up|gate)_(ch|)exps=CPU,blk\\.41\\.ffn_(up|down|gate_up|gate)_(ch|)exps=CPU\"",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-35B-A3B-MTP-GGUF/Qwen3.6-35B-A3B-UD-IQ3_XXS.gguf -c 262144 -b 1024 -ub 512 -fa on -ctk q5_1 -ctv q5_1",
+      "model": "qwen36-35b-a3b-iq3xxs"
+    },
+    {
+      "context_tokens": 262144,
+      "kv_cache": "q4_0",
+      "returncode": 0,
+      "fit": "-c 262144 -ngl 42 -ot \"blk\\.40\\.ffn_(gate|up|gate_up|down).*=CPU,blk\\.41\\.ffn_(up|down|gate_up|gate)_(ch|)exps=CPU\"",
+      "ok": true,
+      "command": "$LLAMA_CPP/build/bin/llama-fit-params -m $LLAMA_ROOT/models/unsloth/Qwen3.6-35B-A3B-MTP-GGUF/Qwen3.6-35B-A3B-UD-IQ3_XXS.gguf -c 262144 -b 1024 -ub 512 -fa on -ctk q4_0 -ctv q4_0",
+      "model": "qwen36-35b-a3b-iq3xxs"
+    }
+  ]
+}

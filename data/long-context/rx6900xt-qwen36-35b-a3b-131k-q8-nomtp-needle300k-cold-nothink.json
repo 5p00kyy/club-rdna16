@@ -1,0 +1,15 @@
+{
+  "schema": "club-rdna16.long-context-needle.v1",
+  "timestamp_utc": "2026-05-23T00:38:40.748497+00:00",
+  "model": "Qwen3.6-35B-A3B-rdna16-131k-q8kv",
+  "target_chars": 300000,
+  "prompt_tokens": 70992,
+  "completion_tokens": 15,
+  "wall_seconds": 192.931,
+  "prompt_tok_s": 373.36589310560566,
+  "decode_tok_s": 6.132300708403378,
+  "needle": "CLUB-RDNA16-NEEDLE-317",
+  "salt": "cold-317",
+  "answer": "CLUB-RDNA16-NEEDLE-317",
+  "passed": true
+}
