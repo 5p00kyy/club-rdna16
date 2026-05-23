@@ -22,7 +22,8 @@
 2. RX 6900 XT fit matrix: Qwen3.6 27B and 35B-A3B across context and KV cache settings.
 3. RX 6900 XT runtime matrix: short-chat, code-generate, agent-tool, and long-retrieval prompts on candidate profiles.
 4. Public readiness pass: scrub private paths/hosts, validate data, build site data, review README and issue templates.
-5. RX 9070 XT intake: document expected ROCm target, collect a contributor stack report, then run the same matrix.
+5. Community research pass: capture LocalLLaMA AMD/Radeon setup signals and turn them into bounded test axes, not unverified claims.
+6. RX 9070 XT intake: document expected ROCm target, collect a contributor stack report, then run the same matrix.
 
 ## Public Checklist
 
@@ -32,3 +33,4 @@
 - Every promoted profile has a reproducible launch snippet.
 - The README says which results are measured, fit-only, or expected-but-unverified.
 - GitHub issue templates ask for the exact fields needed for comparison.
+- Community-sourced claims are linked and marked as prompts for testing unless reproduced by a submitted result.

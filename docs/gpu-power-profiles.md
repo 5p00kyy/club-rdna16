@@ -53,7 +53,7 @@ sudo sh -c 'echo manual > /sys/class/drm/card1/device/power_dpm_force_performanc
 sudo sh -c 'echo 5 > /sys/class/drm/card1/device/pp_power_profile_mode'
 ```
 
-To restore the current observed mode:
+To restore the original observed 3D desktop mode:
 
 ```bash
 sudo sh -c 'echo 1 > /sys/class/drm/card1/device/pp_power_profile_mode'

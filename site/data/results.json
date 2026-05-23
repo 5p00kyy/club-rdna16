@@ -159,9 +159,8 @@
         "kv_cache_k": "q8_0",
         "kv_cache_v": "q8_0",
         "speculation": {
-          "type": "draft-mtp",
-          "draft_n": 3,
-          "notes": "MTP profiles use native llama.cpp draft-mtp; no-MTP profile has no spec-type in preset."
+          "type": "none",
+          "notes": "No-MTP profile has no spec-type in preset."
         },
         "thinking": "off",
         "reasoning_budget": 8192,
@@ -229,9 +228,8 @@
         "kv_cache_k": "q8_0",
         "kv_cache_v": "q8_0",
         "speculation": {
-          "type": "draft-mtp",
-          "draft_n": 3,
-          "notes": "MTP profiles use native llama.cpp draft-mtp; no-MTP profile has no spec-type in preset."
+          "type": "none",
+          "notes": "No-MTP profile has no spec-type in preset."
         },
         "thinking": "off",
         "reasoning_budget": 8192,

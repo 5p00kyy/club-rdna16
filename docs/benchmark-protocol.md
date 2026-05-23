@@ -40,3 +40,18 @@ Long-context results with tiny generated-token counts are fit/retrieval evidence
 ## MTP Rule
 
 MTP GGUF files do not automatically mean MTP is active. Record the exact flags and only claim MTP if the runtime initialized `draft-mtp` successfully.
+
+For 16GB AMD cards, run MTP with `parallel=1` first. Compare `--spec-draft-n-max 2` and `3` before promoting a result; higher draft depth can be slower on some AMD setups.
+
+## Backend And Batch Sweeps
+
+The initial seed data is ROCm/HIP because that is the tested RX 6900 XT stack. Community reports justify adding a future ROCm/HIP vs Vulkan comparison, but backend results must use the same model, quant, KV cache, prompts, context depth, and power profile.
+
+When tuning batch settings, sweep instead of guessing:
+
+```bash
+llama-bench -m "$MODEL" -ngl 99 -fa 1 -ctk q8_0 -ctv q8_0 \
+  -p 2048 -n 128 -b 512,1024,2048,4096 -ub 64,128,256,512
+```
+
+If a setting is fast only at empty or tiny context, mark it as short-context evidence. Public recommendations need at least one non-empty-context or long-retrieval receipt.

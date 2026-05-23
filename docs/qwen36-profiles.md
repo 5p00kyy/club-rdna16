@@ -43,5 +43,7 @@ Current MTP guidance:
 - Promote 35B-A3B `102400/q8_0`, `parallel=1`, `b512/ub256` when MTP is wanted.
 - Treat 35B-A3B `131072/q8_0`, `parallel=1`, `b256/ub128` as short-prompt only until long-prefill OOM is solved.
 - Do not promote 27B MTP yet; q8 loads, but speed and long-context behavior are not competitive in the seed tests.
+- For public recommendations, keep KV at `q8_0` unless a result is explicitly marked exploratory. Lower-KV context-stretching is useful research, but it is not the first `club-rdna16` quality target.
+- Sweep `--spec-draft-n-max 2` and `3` for future MTP submissions. Community reports show too much draft depth can slow AMD runs down.
 
 If `llama-fit-params` recommends fewer GPU layers or CPU tensor overrides, record that result as a separate profile. Do not hide CPU offload inside a headline all-GPU result.

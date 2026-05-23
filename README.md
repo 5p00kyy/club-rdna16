@@ -16,6 +16,7 @@ This is not a synthetic leaderboard. A result is only useful when it includes en
 | `docs/rx-6900-xt-baseline.md` | You want the first tested hardware/software baseline. |
 | `docs/qwen36-profiles.md` | You want Qwen3.6 27B and 35B-A3B context/KV recommendations. |
 | `docs/gpu-power-profiles.md` | You want LACT/amdgpu power-profile notes for repeatable tests. |
+| `docs/local-llama-research.md` | You want the Reddit/community research that shaped the first public plan. |
 | `docs/reporting-results.md` | You want to submit or review a result. |
 
 ## Current Baseline
@@ -92,6 +93,7 @@ bash scripts/report.sh --url http://127.0.0.1:8088 --model Qwen3.6-35B-A3B
 - `docs/rx-6900-xt-baseline.md` - current tested seed machine
 - `docs/qwen36-profiles.md` - recommended Qwen3.6 27B and 35B-A3B profile matrix
 - `docs/gpu-power-profiles.md` - LACT/amdgpu profile checks and compute-mode comparison plan
+- `docs/local-llama-research.md` - LocalLLaMA and official-reference research notes
 - `docs/fit-matrix.md` - first fit-probe findings
 - `docs/troubleshooting.md` - ROCm/llama.cpp failure notes
 - `docs/reporting-results.md` - community submission rules
