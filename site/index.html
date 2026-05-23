@@ -9,20 +9,22 @@
   <style>
     :root {
       color-scheme: dark;
-      --bg: #0a0a0a;
-      --bg2: #111;
-      --bg3: #171717;
-      --line: #222a33;
-      --line-2: #2a3643;
-      --text: #cfd6de;
-      --text-2: #8994a1;
-      --text-3: #66707b;
-      --bright: #eef3f8;
-      --green: #00e87a;
-      --green-2: #00b85f;
-      --amber: #f0a800;
-      --red: #e84040;
-      --blue: #4a8fff;
+      --bg: #080607;
+      --bg2: #120d0e;
+      --bg3: #1a1113;
+      --line: #382024;
+      --line-2: #522c31;
+      --text: #eadcdf;
+      --text-2: #b79ca1;
+      --text-3: #85666b;
+      --bright: #fff7f8;
+      --green: #ff2d2d;
+      --green-2: #c61620;
+      --amber: #ffb545;
+      --red: #ff2d2d;
+      --blue: #7aa7ff;
+      --red-dark: #210b0e;
+      --red-mid: #3a1117;
       --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, Liberation Mono, monospace;
       --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif;
     }
@@ -34,7 +36,9 @@
       font-family: var(--mono);
       font-size: 12px;
       line-height: 1.5;
-      background: var(--bg);
+      background:
+        linear-gradient(180deg, rgba(72, 10, 15, 0.42), transparent 290px),
+        var(--bg);
       color: var(--text);
     }
 
@@ -53,7 +57,7 @@
       top: 0;
       z-index: 30;
       border-bottom: 1px solid var(--line);
-      background: rgba(10, 10, 10, 0.95);
+      background: rgba(8, 6, 7, 0.95);
       backdrop-filter: blur(8px);
     }
 
@@ -119,7 +123,7 @@
     .hw-bar {
       border: 1px solid var(--line);
       border-radius: 6px;
-      background: var(--bg2);
+      background: linear-gradient(90deg, rgba(198, 22, 32, 0.14), rgba(18, 13, 14, 0.96));
       padding: 10px 12px;
       margin-bottom: 10px;
       display: grid;
@@ -177,7 +181,7 @@
     .stat {
       border: 1px solid var(--line);
       border-radius: 5px;
-      background: var(--bg2);
+      background: linear-gradient(180deg, #171011, var(--bg2));
       padding: 8px 9px;
       min-height: 62px;
       min-width: 0;
@@ -227,7 +231,7 @@
       padding: 6px 8px;
       border-radius: 4px;
       border: 1px solid var(--line-2);
-      background: #0f141a;
+      background: #160d0f;
       color: var(--text);
       font: inherit;
     }
@@ -246,7 +250,7 @@
       gap: 7px;
       border-radius: 4px;
       border: 1px solid var(--line-2);
-      background: #0f141a;
+      background: #160d0f;
       padding: 6px 8px;
       color: var(--text-2);
       white-space: nowrap;
@@ -342,7 +346,7 @@
       padding: 8px 9px;
       border: 1px solid var(--line-2);
       border-radius: 4px;
-      background: #0d1218;
+      background: #150d0f;
       color: var(--text-2);
       font-size: 11px;
     }
@@ -372,7 +376,7 @@
 
     th {
       position: static;
-      background: #10151b;
+      background: #1b1113;
       color: var(--text-2);
       font-size: 10px;
       text-transform: uppercase;
@@ -385,7 +389,7 @@
     th[data-sort]:hover { color: var(--green); }
     th[aria-sort="ascending"],
     th[aria-sort="descending"] { color: var(--bright); }
-    tbody tr:hover td { background: #141b23; }
+    tbody tr:hover td { background: #211315; }
     tbody tr:last-child td { border-bottom: 0; }
 
     .mono { font-family: var(--mono); }
@@ -397,6 +401,13 @@
       color: var(--bright);
       font-weight: 600;
       margin-bottom: 1px;
+      word-break: break-word;
+    }
+
+    .profile {
+      color: var(--green);
+      font-weight: 700;
+      margin-bottom: 2px;
       word-break: break-word;
     }
 
@@ -416,12 +427,12 @@
       font-size: 10px;
       white-space: nowrap;
       color: var(--text);
-      background: #101720;
+      background: #1a1012;
     }
 
-    .badge.engine { color: #b6d4fb; border-color: #244668; background: #0f1a26; }
-    .badge.green { color: #9ff0bb; border-color: #1f6b3a; background: #0e2417; }
-    .badge.blue { color: #b5d7ff; border-color: #25598f; background: #0d1b2b; }
+    .badge.engine { color: #ffd7d7; border-color: #7b272e; background: #221014; }
+    .badge.green { color: #ffc4c4; border-color: #8e242b; background: #250f13; }
+    .badge.blue { color: #c9dcff; border-color: #315886; background: #101626; }
     .badge.amber { color: #ffd690; border-color: #745111; background: #241a08; }
     .badge.red { color: #ffb7b7; border-color: #713030; background: #251111; }
 
@@ -437,7 +448,7 @@
       height: 6px;
       border-radius: 99px;
       overflow: hidden;
-      background: #26333f;
+      background: #3a2428;
     }
 
     .bar-fill {
@@ -465,7 +476,7 @@
       align-items: start;
       padding: 10px;
       border-bottom: 1px solid var(--line);
-      background: #10151b;
+      background: linear-gradient(90deg, rgba(198, 22, 32, 0.18), #171011);
     }
 
     .model-title .model { font-size: 13px; }
@@ -533,7 +544,7 @@
       gap: 8px;
       padding: 8px 9px;
       border-bottom: 1px solid var(--line);
-      background: #10151b;
+      background: #1b1113;
     }
 
     .summary-title {
@@ -698,7 +709,7 @@
     <div class="wrap topbar">
       <div class="brand">
         <span class="name">club-rdna16</span>
-        <span class="sub">local LLM recipes and measured benchmark evidence</span>
+        <span class="sub">16GB AMD Radeon local LLM benchmarks</span>
       </div>
       <nav>
         <a href="#results">results</a>
@@ -725,7 +736,7 @@
 
     <div class="stat-grid">
       <div class="stat">
-        <div class="k">Visible models</div>
+        <div class="k">Visible profiles</div>
         <div class="v" id="metric-visible">0</div>
         <div class="n" id="metric-total">0 raw runs loaded</div>
       </div>
@@ -878,6 +889,54 @@
       .replace(/\s+/g, ' ')
       .trim();
 
+    const contextLabel = (tokens) => {
+      const value = Number(tokens || 0);
+      if (!value) return 'ctx n/a';
+      if (value >= 1000) {
+        const rounded = Math.round(value / 1000);
+        return rounded + 'k';
+      }
+      return String(value);
+    };
+
+    const modelDisplayName = (item) => {
+      const family = get(item, 'model.family', '');
+      const params = get(item, 'model.parameter_class', '');
+      if (family && params) return family + ' ' + params;
+      const id = String(get(item, 'model.id', 'unknown'));
+      if (id.includes('35B-A3B')) return 'Qwen3.6 35B-A3B';
+      if (id.includes('27B')) return 'Qwen3.6 27B';
+      return id
+        .replace(/-rdna16.*$/i, '')
+        .replace(/-/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    };
+
+    const profileLabel = (item) => {
+      const context = contextLabel(get(item, 'serving.context_tokens', get(item, 'benchmark.configured_context_tokens', null)));
+      const kv = get(item, 'serving.kv_cache_k', '').replace('_0', '').toLowerCase() || 'kv';
+      const spec = specLabel(item) === 'no MTP' ? 'no-MTP' : 'MTP';
+      const notes = [];
+      if (String(get(item, 'model.id', '')).includes('short-only')) notes.push('short-only');
+      const source = String(get(item, 'source.label', ''));
+      if (source.includes('compute')) notes.push('compute');
+      else if (source.includes('seed')) notes.push('3D');
+      return [context, kv, spec, ...notes].join(' ');
+    };
+
+    const compactModelId = (item) => {
+      const id = String(get(item, 'model.id', ''));
+      if (!id) return '';
+      return id
+        .replace(/^Qwen3\.6-/, '')
+        .replace(/-rdna16-/g, ' / ')
+        .replace(/q8kv/g, 'q8 KV')
+        .replace(/-/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    };
+
     const gpuFilterLabel = (item) => {
       const count = get(item, 'hardware.gpu_count', '');
       const model = normalizeGpuModel(get(item, 'hardware.gpu_model', 'GPU'));
@@ -909,6 +968,8 @@
 
     const resultText = (item) => [
       get(item, 'model.id', ''),
+      modelDisplayName(item),
+      profileLabel(item),
       get(item, 'model.family', ''),
       get(item, 'model.quant', ''),
       get(item, 'runtime.engine', ''),
@@ -924,7 +985,7 @@
     ].join(' ').toLowerCase();
 
     const sortValue = (item, key) => {
-      if (key === 'model') return get(item, 'model.id', '');
+      if (key === 'model') return modelDisplayName(item) + ' ' + profileLabel(item);
       if (key === 'engine') return get(item, 'runtime.engine', '');
       if (key === 'gpus') return get(item, 'hardware.gpu_count', 0);
       if (key === 'context') return get(item, 'serving.context_tokens', get(item, 'benchmark.configured_context_tokens', 0));
@@ -1097,11 +1158,12 @@
       for (const item of items) {
         const gpuCount = get(item, 'hardware.gpu_count', '?');
         const gpuModel = get(item, 'hardware.gpu_model', 'GPU');
-        const vram = get(item, 'hardware.vram_per_gpu_gb', null);
+        const rawVram = get(item, 'hardware.vram_per_gpu_gb', null);
+        const vram = rawVram === null || rawVram === undefined || rawVram === '' ? null : Number(rawVram);
         const hostRam = get(item, 'hardware.host_ram_gb', null);
         const inferenceRam = get(item, 'hardware.inference_ram_gb', null);
         const lane = hardwareLaneLabel(item);
-        const key = [gpuCount, gpuModel, vram, hostRam, inferenceRam, lane].join('|');
+        const key = [gpuCount, gpuModel, vram, lane].join('|');
         const existing = buckets.get(key) || { count: 0, gpuCount, gpuModel, vram, hostRam, inferenceRam, lane };
         existing.count += 1;
         buckets.set(key, existing);
@@ -1244,7 +1306,9 @@
 
     const renderModelCard = (group, maxDecode, maxPrompt) => {
       const item = group.base;
-      const model = get(item, 'model.id', 'unknown');
+      const model = modelDisplayName(item);
+      const profile = profileLabel(item);
+      const compactId = compactModelId(item);
       const quant = get(item, 'model.quant', 'unknown');
       const family = get(item, 'model.family', 'unknown');
       const engine = get(item, 'runtime.engine', 'unknown');
@@ -1258,12 +1322,16 @@
       const thinkingLabel = 'thinking ' + thinking + (reasoningBudget !== null && reasoningBudget !== undefined ? ' / budget ' + formatNumber(reasoningBudget, 0) : '');
       return '<article class="model-card">' +
         '<div class="model-head">' +
-          '<div class="model-title"><div class="model">' + escapeHtml(model) + '</div><div class="subline">' + escapeHtml(family) + ' / ' + escapeHtml(quant) + '</div></div>' +
+          '<div class="model-title">' +
+            '<div class="profile">' + escapeHtml(profile) + '</div>' +
+            '<div class="model">' + escapeHtml(model) + '</div>' +
+            '<div class="subline">' + escapeHtml(compactId || (family + ' / ' + quant)) + '</div>' +
+          '</div>' +
           '<div class="model-tags">' +
             '<span class="badge engine">' + escapeHtml(engine) + '</span>' +
             '<span class="badge green">' + escapeHtml(lane) + '</span>' +
             '<span class="badge">' + escapeHtml(gpu) + '</span>' +
-            '<span class="badge">ctx ' + formatNumber(context, 0) + '</span>' +
+            '<span class="badge">ctx ' + escapeHtml(contextLabel(context)) + '</span>' +
             '<span class="badge">' + escapeHtml(kv) + '</span>' +
             '<span class="badge blue">' + escapeHtml(specLabel(item)) + '</span>' +
             '<span class="badge amber">' + escapeHtml(thinkingLabel) + '</span>' +
