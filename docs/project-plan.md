@@ -5,7 +5,7 @@
 ## Goals
 
 - Make RX 6900 XT and RX 9070 XT local-model results comparable without pretending the cards are identical.
-- Find practical Qwen3.6 27B and 35B-A3B quant/context/KV profiles for daily use.
+- Find practical Qwen3.8 27B and Qwen3.6 27B/35B-A3B quant, context, KV, and speculation profiles for daily use.
 - Capture reproducible benchmark receipts: hardware, software stack, launch flags, model file, context, KV cache, prompt shape, speed, and caveats.
 - Keep a submission path similar to `club-5060ti`: issue template first, structured JSON preferred, static explorer generated from checked-in data.
 
@@ -19,7 +19,7 @@
 ## Release Phases
 
 1. Baseline scaffold: docs, schema, validation, report helper, static explorer, and sanitized examples.
-2. RX 6900 XT fit matrix: Qwen3.6 27B and 35B-A3B across context and KV cache settings.
+2. RX 6900 XT fit matrix: Qwen3.8 27B and Qwen3.6 27B/35B-A3B across context, KV cache, and speculation settings.
 3. RX 6900 XT runtime matrix: short-chat, code-generate, agent-tool, and long-retrieval prompts on candidate profiles.
 4. Public readiness pass: scrub private paths/hosts, validate data, build site data, review README and issue templates.
 5. Community research pass: capture LocalLLaMA AMD/Radeon setup signals and turn them into bounded test axes, not unverified claims.

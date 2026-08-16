@@ -31,20 +31,21 @@ Seed hardware:
 - Runtime: upstream llama.cpp HIP build plus a sidecar Vulkan build from the same llama.cpp commit
 - ROCm packages observed locally: 7.2.x family
 - Vulkan stack observed locally: RADV / Mesa 26.2.0-devel
-- Current benchmark models: Unsloth Qwen3.6 27B MTP GGUF and Qwen3.6 35B-A3B MTP GGUF, both `UD-IQ3_XXS`. The Qwen3.6 35B-A3B 100K q8 MTP lane is the first published tested preset. Qwen3.8 27B `UD-IQ3_XXS` is the next canonical evidence candidate and still needs a metadata-complete rerun.
+- Current benchmark models: Unsloth Qwen3.8 27B, Qwen3.6 27B MTP, and Qwen3.6 35B-A3B MTP GGUFs at `UD-IQ3_XXS`. The recommended dense route is Qwen3.8 27B at 64K q8 KV with shallow MTP; Qwen3.6 35B-A3B at 100K q8 KV is the published MoE alternative.
 
 Important first finding: keep q8 KV as the default target on this card. The current seed data has separate evidence for ROCm/HIP under `COMPUTE` and `3D_FULL_SCREEN`, plus Vulkan under `3D_FULL_SCREEN`. Backend and power-profile rows should be compared as separate lanes.
 
 ## Tested And Candidate Profiles
 
-The Qwen3.6 35B-A3B 100K q8 MTP route is the first published tested preset. The
+The recommended route is Qwen3.8 27B at 64K q8 KV with shallow MTP. Qwen3.6
+35B-A3B at 100K q8 KV is the faster-prompt, longer-context MoE alternative. The
 remaining rows are seed-tested or community-submitted candidates awaiting the
-same reviewed evidence path. All profiles below use `q8_0` KV on one RX 6900 XT;
-the published 100K route and current canonical candidates keep reasoning enabled.
+same reviewed evidence path. All profiles below use `q8_0` KV on one RX 6900 XT,
+and both published routes keep reasoning enabled.
 
 | Model | Purpose | Context | KV cache | Notes |
 | --- | --- | ---: | --- | --- |
-| Qwen3.8 27B `UD-IQ3_XXS` | canonical candidate lane | 65536 | `q8_0` | Next evidence candidate (`rx6900xt-qwen38-27b-iq3xxs-64k-q8-mtp`): b512/ub128, built-in draft-MTP n=2 / p-min=0.1, reasoning on, COMPUTE. No evidence is published yet; a metadata-complete rerun must be reviewed before this preset is promoted. |
+| Qwen3.8 27B `UD-IQ3_XXS` | **recommended dense route** | 65536 | `q8_0` | Reviewed thinking-on profile passed 2/2 retrieval and 2/2 sustained checks at 64K with `parallel=1`, b512/ub128, built-in draft-MTP n=2 / p-min=0.1, 30.4 tok/s median sustained decode, 357 tok/s median prefill, and 60.3% MTP acceptance under ROCm/HIP + COMPUTE. |
 | Qwen3.6 35B-A3B `UD-IQ3_XXS` | stable q8 route | 131072 | `q8_0` | No-MTP cold 300k-character needle passed; compute profile gave the best long-prefill result. Seed rows were captured with request-level `disable_thinking`. |
 | Qwen3.6 35B-A3B `UD-IQ3_XXS` | **published MTP q8 route** | 102400 | `q8_0` | Reviewed thinking-on profile passed 2/2 retrieval and 2/2 sustained checks at 100K with `parallel=1`, b512/ub256, 56.5 tok/s median sustained decode, 871 tok/s median prefill, and 92.2% MTP acceptance under ROCm/HIP + COMPUTE. |
 | Qwen3.6 35B-A3B `UD-IQ3_XXS` | Vulkan MTP q8 route | 102400 | `q8_0` | Vulkan 3D_FULL_SCREEN pass loaded and passed a cold 300k-character needle; repeat under `COMPUTE` before treating it as a replacement for HIP guidance. |

@@ -33,7 +33,8 @@ This directory holds **reviewed public evidence bundles** for canonical presets 
 - `published` – promoted after review; the only status the preset-first site shows.
 - `archived` – previously published, superseded.
 
-The first published bundle validates the Qwen3.6 35B-A3B 100K q8 MTP alternative
-on one RX 6900 XT through ROCm/HIP under `COMPUTE`. Its passing sanitized receipt
-and the preceding 512-token retrieval diagnostic are both tracked for review.
-Only bundles with `status: published` appear in the site's "tested presets" grid.
+Published seed bundles currently validate two ROCm/HIP routes under `COMPUTE` on
+one RX 6900 XT: the recommended Qwen3.8 27B 64K q8 MTP dense preset and the
+Qwen3.6 35B-A3B 100K q8 MTP alternative. The Qwen3.6 bundle also keeps its
+preceding 512-token retrieval diagnostic alongside the passing receipt. Only
+bundles with `status: published` appear in the site's "tested presets" grid.

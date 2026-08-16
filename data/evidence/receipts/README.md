@@ -13,5 +13,6 @@ receipts that published evidence bundles reference.
   contains those private fields, leaks private IPs/paths, or references a preset that
   does not match the bundle.
 
-No public receipts exist yet. Everything recorded so far is seed benchmark data under
-`data/results/`, which is separate from preset-fit evidence.
+Tracked receipts are reviewed, sanitized copies supporting published preset-fit
+evidence. Routine and failed raw runs remain in `.local/bench/`; historical seed
+benchmark rows under `data/results/` remain a separate evidence surface.
