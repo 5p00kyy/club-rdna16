@@ -118,6 +118,37 @@
       outline-offset: 2px;
     }
 
+    .tier-tab:focus-visible {
+      outline: 2px solid var(--blue);
+      outline-offset: -2px;
+    }
+
+    .hero {
+      padding: 22px 0 16px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 14px;
+    }
+
+    .hero h1 {
+      font-family: var(--sans);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--bright);
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+      margin: 0 0 4px;
+    }
+
+    .hero h1 .accent { color: var(--green); white-space: nowrap; }
+
+    .hero p {
+      font-family: var(--sans);
+      font-size: 12px;
+      color: var(--text-2);
+      margin: 0;
+      max-width: 620px;
+    }
+
     main { padding: 18px 0 30px; }
 
     .hw-bar {
@@ -266,6 +297,50 @@
     .preset-caveat { color: var(--text-2); font-size: 11px; margin: 8px 0 0; }
     .preset-empty { color: var(--text-2); padding: 5px 0; }
 
+    .tier-bar {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 12px;
+      background: var(--bg2);
+    }
+
+    .tier-tab {
+      flex: 1;
+      padding: 8px 12px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-2);
+      cursor: pointer;
+      text-align: center;
+      border: 0;
+      border-right: 1px solid var(--line);
+      border-radius: 0;
+      background: transparent;
+      transition: background .15s, color .15s;
+      user-select: none;
+    }
+
+    .tier-tab:last-child { border-right: 0; }
+    .tier-tab:hover { color: var(--bright); background: var(--bg3); }
+    .tier-tab.active { color: var(--bright); background: #1b1113; font-weight: 600; }
+    .tier-tab .count {
+      display: inline-block;
+      min-width: 18px;
+      padding: 1px 5px;
+      border-radius: 99px;
+      font-size: 10px;
+      margin-left: 4px;
+      background: var(--bg3);
+      color: var(--text-2);
+    }
+    .tier-tab.active .count { background: var(--green-2); color: var(--bright); }
+    .tier-tab.tier-recommended.active { border-bottom: 2px solid var(--green); }
+    .tier-tab.tier-alternative.active { border-bottom: 2px solid var(--blue); }
+    .tier-tab.tier-candidate.active { border-bottom: 2px solid var(--amber); }
+
     .panel {
       border: 1px solid var(--line);
       background: var(--bg2);
@@ -277,8 +352,12 @@
     .toolbar {
       display: grid;
       gap: 7px;
-      grid-template-columns: minmax(240px, 1.4fr) repeat(8, minmax(105px, 1fr)) repeat(2, minmax(105px, 0.8fr));
+      grid-template-columns: minmax(220px, 1.4fr) repeat(8, minmax(0, 1fr)) repeat(2, minmax(0, 0.8fr));
+      min-width: 0;
     }
+
+    .toolbar > * { min-width: 0; }
+    .toolbar .check { overflow-wrap: anywhere; }
 
     input, select {
       width: 100%;
@@ -490,6 +569,9 @@
     .badge.blue { color: #c9dcff; border-color: #315886; background: #101626; }
     .badge.amber { color: #ffd690; border-color: #745111; background: #241a08; }
     .badge.red { color: #ffb7b7; border-color: #713030; background: #251111; }
+    .badge.tier-recommended { color: #ffc4c4; border-color: #8e242b; background: #250f13; font-weight: 600; }
+    .badge.tier-alternative { color: #c9dcff; border-color: #315886; background: #101626; }
+    .badge.tier-candidate { color: #ffd690; border-color: #745111; background: #241a08; }
 
     .bar {
       display: grid;
@@ -564,6 +646,33 @@
       font-size: 15px;
       font-weight: 600;
       line-height: 1.2;
+    }
+
+    .model-kpis-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+
+    .model-spark {
+      color: var(--green);
+      opacity: 0.7;
+      flex-shrink: 0;
+    }
+
+    .sparkline { display: block; }
+
+    .model-kpi--hero .v {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .model-kpi--hero .unit {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--text-3);
     }
 
     .prompt-table {
@@ -647,12 +756,17 @@
       .summary-grid { grid-template-columns: 1fr; }
       .model-head { grid-template-columns: 1fr; }
       .model-kpis { justify-content: start; text-align: left; }
+      .model-kpis-row { justify-content: flex-start; }
     }
 
     @media (max-width: 720px) {
       .wrap { width: min(100vw - 18px, 1220px); }
       .topbar { align-items: flex-start; }
       .brand { flex-direction: column; align-items: flex-start; gap: 2px; }
+      nav a { font-size: 12px; padding: 6px 8px; }
+      .meta, .preset-caveat { font-size: 12px; }
+      .hero h1 { font-size: 19px; }
+      .tier-tab { padding: 8px 6px; font-size: 10px; }
       .hw-bar { grid-template-columns: 1fr; gap: 7px; }
       .stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .toolbar { grid-template-columns: 1fr; }
@@ -757,6 +871,16 @@
 
     @media (max-width: 460px) {
       .stat-grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 18px; }
+      .tier-bar { flex-wrap: wrap; }
+      .tier-tab { flex: 1 1 50%; }
+      .tier-tab:nth-child(even) { border-right: 0; }
+      .tier-tab:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .tier-tab { transition: none; }
     }
   </style>
 </head>
@@ -778,13 +902,24 @@
   </header>
 
   <main class="wrap">
+    <div class="hero">
+      <h1>What can a <span class="accent">16&nbsp;GB AMD Radeon</span> actually run locally?</h1>
+      <p>Copyable ROCm/HIP and Vulkan presets for 16GB Radeon cards, with measured evidence and raw benchmark receipts behind them.</p>
+    </div>
+
     <section class="preset-intro" id="presets" aria-labelledby="preset-heading">
       <div class="sec-head">
-        <div class="sec-title"><span class="prompt">$</span><h2 id="preset-heading">tested presets</h2></div>
-        <span class="meta">published evidence only</span>
+        <div class="sec-title"><span class="prompt">$</span><h2 id="preset-heading">preset catalogue</h2></div>
+        <span class="meta" id="preset-meta">loading presets</span>
       </div>
-      <p class="preset-intro-copy">Start with a recipe we would actually run. Each card carries its hardware lane, backend (ROCm/HIP vs Vulkan), power profile, exact configuration, validated context, and compact evidence. The explorer below remains for comparisons, experiments, and archive provenance.</p>
-      <div class="preset-grid" id="preset-list" aria-live="polite"><div class="preset-empty">Loading preset catalogue…</div></div>
+      <p class="preset-intro-copy">Start with a recipe we would actually run. Each card carries its hardware lane, backend (ROCm/HIP vs Vulkan), power profile, exact configuration, validated context, and compact evidence. Recommended and alternative presets carry reviewed evidence; candidates are reproducible configurations still awaiting that evidence, so their metrics remain n/a. The explorer below remains for comparisons, experiments, and archive provenance.</p>
+      <div class="tier-bar" id="preset-tier-bar" role="tablist" aria-label="Preset tiers">
+        <button type="button" class="tier-tab tier-recommended active" id="tab-tier-all" role="tab" aria-selected="true" aria-controls="preset-list" tabindex="0" data-tier="all">all <span class="count" id="tier-count-all">0</span></button>
+        <button type="button" class="tier-tab tier-recommended" id="tab-tier-recommended" role="tab" aria-selected="false" aria-controls="preset-list" tabindex="-1" data-tier="recommended">recommended <span class="count" id="tier-count-recommended">0</span></button>
+        <button type="button" class="tier-tab tier-alternative" id="tab-tier-alternative" role="tab" aria-selected="false" aria-controls="preset-list" tabindex="-1" data-tier="alternative">alternative <span class="count" id="tier-count-alternative">0</span></button>
+        <button type="button" class="tier-tab tier-candidate" id="tab-tier-candidate" role="tab" aria-selected="false" aria-controls="preset-list" tabindex="-1" data-tier="candidate">candidate <span class="count" id="tier-count-candidate">0</span></button>
+      </div>
+      <div class="preset-grid" id="preset-list" role="tabpanel" aria-labelledby="tab-tier-all" aria-live="polite"><div class="preset-empty">Loading preset catalogue…</div></div>
     </section>
     <div class="hw-bar">
       <div class="hw-label">hardware lane</div>
@@ -936,6 +1071,7 @@
     let visibleResults = [];
     let sortKey = 'decode';
     let sortDir = -1;
+    let presetTier = 'all';
 
     const formatNumber = (value, digits) => {
       if (value === undefined || value === null || Number.isNaN(Number(value))) return 'n/a';
@@ -1038,9 +1174,15 @@
 
     const renderPresetCards = () => {
       const target = document.getElementById('preset-list');
-      const cards = allPresetCards.filter((card) => card.ready_for_default);
+      let cards = presetTier === 'all'
+        ? allPresetCards
+        : allPresetCards.filter((card) => presetStatus(card) === presetTier);
+      cards = [...cards].sort(
+        (a, b) => presetStatusRank(presetStatus(a)) - presetStatusRank(presetStatus(b))
+          || String(get(a, 'preset.title', '')).localeCompare(String(get(b, 'preset.title', '')))
+      );
       if (!cards.length) {
-        target.innerHTML = '<div class="preset-empty">No reviewed presets are published yet. Browse the evidence explorer below while the catalogue is refreshed.</div>';
+        target.innerHTML = '<div class="preset-empty">No presets in this tier yet. Choose another tier or browse the evidence explorer below.</div>';
         return;
       }
       target.innerHTML = cards.map((card) => {
@@ -1064,7 +1206,7 @@
           '<div class="preset-card-head">' +
             '<h3 class="preset-card-title">' + escapeHtml(preset.title || preset.id || 'preset') + '</h3>' +
             '<div class="model-tags">' +
-              '<span class="badge tier-recommended">' + escapeHtml(preset.status || 'reviewed') + '</span>' +
+              '<span class="' + presetBadgeClass(preset.status) + '">' + escapeHtml(preset.status || 'reviewed') + '</span>' +
               '<span class="badge green">' + escapeHtml(laneLabel(hardware.lane)) + '</span>' +
               '<span class="badge engine">' + escapeHtml(runtime.engine || 'runtime') + '</span>' +
               '<span class="badge blue">' + escapeHtml(runtime.backend || 'backend') + '</span>' +
@@ -1088,6 +1230,34 @@
           '</div>' +
         '</article>';
       }).join('');
+    };
+
+    const presetStatus = (card) => String(get(card, 'preset.status', '') || 'candidate');
+
+    const presetStatusRank = (status) => (
+      status === 'recommended' ? 0 : status === 'alternative' ? 1 : status === 'candidate' ? 2 : 3
+    );
+
+    const presetBadgeClass = (status) => 'badge tier-' + (['recommended', 'alternative', 'candidate'].includes(status) ? status : 'candidate');
+
+    const renderTierBar = () => {
+      const counts = { all: allPresetCards.length, recommended: 0, alternative: 0, candidate: 0 };
+      for (const card of allPresetCards) {
+        const status = presetStatus(card);
+        if (counts[status] !== undefined) counts[status] += 1;
+      }
+      document.getElementById('tier-count-all').textContent = counts.all;
+      document.getElementById('tier-count-recommended').textContent = counts.recommended;
+      document.getElementById('tier-count-alternative').textContent = counts.alternative;
+      document.getElementById('tier-count-candidate').textContent = counts.candidate;
+      document.querySelectorAll('.tier-tab').forEach((tab) => {
+        const active = tab.getAttribute('data-tier') === presetTier;
+        tab.classList.toggle('active', active);
+        tab.setAttribute('aria-selected', String(active));
+        tab.setAttribute('tabindex', active ? '0' : '-1');
+      });
+      document.getElementById('preset-list').setAttribute('aria-labelledby', 'tab-tier-' + presetTier);
+      document.getElementById('preset-meta').textContent = counts.all + ' presets · ' + (counts.recommended + counts.alternative) + ' reviewed';
     };
 
     const fillSelect = (id, label, values) => {
@@ -1459,6 +1629,26 @@
         '</tr>';
     }).join('');
 
+    const buildSparkline = (values, width = 72, height = 22) => {
+      const valid = values.filter((v) => v > 0);
+      if (valid.length < 2) return '';
+      const max = Math.max(...valid);
+      const min = Math.min(...valid);
+      const range = max - min || 1;
+      const step = width / (values.length - 1);
+      const pts = values.map((v, i) => {
+        const x = i * step;
+        const y = v > 0 ? height - 2 - ((v - min) / range) * (height - 4) : height;
+        return x.toFixed(1) + ',' + y.toFixed(1);
+      }).join(' ');
+      const lastY = pts.split(' ').pop().split(',')[1];
+      const lastX = pts.split(' ').pop().split(',')[0];
+      return '<svg class="sparkline" width="' + width + '" height="' + height + '" viewBox="0 0 ' + width + ' ' + height + '">' +
+        '<polyline points="' + pts + '" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>' +
+        '<circle cx="' + lastX + '" cy="' + lastY + '" r="2" fill="currentColor"/>' +
+        '</svg>';
+    };
+
     const renderModelCard = (group, maxDecode, maxPrompt) => {
       const item = group.base;
       const model = modelDisplayName(item);
@@ -1491,7 +1681,10 @@
             '<span class="badge amber">' + escapeHtml(thinkingLabel) + '</span>' +
             '<span class="badge ' + badgeClass(level) + '">' + escapeHtml(level) + '</span>' +
           '</div>' +
-          '<div class="model-kpis"><div class="model-kpi"><div class="k">best generation</div><div class="v">' + (group.bestDecode ? formatNumber(group.bestDecode, 1) : 'n/a') + '</div></div><div class="model-kpi"><div class="k">prompt rows</div><div class="v">' + group.rows.length + '</div></div></div>' +
+          '<div class="model-kpis-row">' +
+            '<div class="model-spark">' + buildSparkline(group.rows.map((r) => Number(get(r, 'metrics.decode_tok_s', 0) || 0))) + '</div>' +
+            '<div class="model-kpis"><div class="model-kpi model-kpi--hero"><div class="k">best generation</div><div class="v">' + (group.bestDecode ? formatNumber(group.bestDecode, 1) : 'n/a') + '<span class="unit"> tok/s</span></div></div><div class="model-kpi"><div class="k">prompt rows</div><div class="v">' + group.rows.length + '</div></div></div>' +
+          '</div>' +
         '</div>' +
         '<div class="table-wrap" style="border:0;border-radius:0;">' +
           '<table class="prompt-table"><thead><tr><th>Prompt</th><th>Generation tok/s</th><th>Prompt eval tok/s</th><th>Tokens</th><th>Runs</th><th>Caveat</th></tr></thead><tbody>' + renderPromptRows(group.rows, maxDecode, maxPrompt) + '</tbody></table>' +
@@ -1559,6 +1752,7 @@
         console.warn('preset catalogue unavailable', error);
       }
       renderPresetCards();
+      renderTierBar();
 
       fillSelect('gpu-filter', 'all hardware', unique(allResults.map((item) => gpuFilterLabel(item))));
       fillSelect('engine-filter', 'all engines', unique(allResults.map((item) => get(item, 'runtime.engine', ''))));
@@ -1572,6 +1766,24 @@
       document.querySelectorAll('input, select').forEach((element) => element.addEventListener('input', applyFilters));
       document.getElementById('archived-filter').addEventListener('change', applyFilters);
       document.getElementById('raw-filter').addEventListener('change', applyFilters);
+
+      const selectTier = (tier) => {
+        presetTier = tier;
+        renderTierBar();
+        renderPresetCards();
+      };
+      const tierTabs = Array.from(document.querySelectorAll('.tier-tab'));
+      tierTabs.forEach((tab) => {
+        tab.addEventListener('click', () => selectTier(tab.getAttribute('data-tier')));
+        tab.addEventListener('keydown', (event) => {
+          if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+          event.preventDefault();
+          const index = tierTabs.indexOf(tab);
+          const next = tierTabs[(index + (event.key === 'ArrowRight' ? 1 : tierTabs.length - 1)) % tierTabs.length];
+          next.focus();
+          selectTier(next.getAttribute('data-tier'));
+        });
+      });
       const sortByHeader = (header) => {
         const next = header.getAttribute('data-sort');
         if (next === sortKey) sortDir *= -1;
