@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0",
+  "id": "rx6900xt-qwen36-27b-iq3xxs-64k-q8-mtp",
+  "title": "Qwen3.6 27B IQ3_XXS 64K q8 MTP short-only on one RX 6900 XT (ROCm/HIP, COMPUTE)",
+  "status": "candidate",
+  "provenance": "seed-tested",
+  "purpose": "Dense 27B q8 short-context route with built-in MTP draft-mtp n=3 at b512/ub256; the reduced batch size is required because long-prefix MTP prefill does not fit at the full batch.",
+  "hardware": {
+    "lane": "1x-rdna16",
+    "gpu_count": 1,
+    "gpu_model": "AMD Radeon RX 6900 XT",
+    "architecture_family": "RDNA2",
+    "architecture_target": "gfx1030",
+    "vram_per_gpu_gb": 16,
+    "power_profile": "COMPUTE"
+  },
+  "runtime": {
+    "engine": "llama.cpp",
+    "backend": "ROCm/HIP",
+    "backend_target": "gfx1030",
+    "preset_file": "examples/llamacpp-rx6900xt-qwen36-27b.ini",
+    "preset_section": "Qwen3.6-27B-rdna16-64k-q8kv-mtp-short-only"
+  },
+  "model": {
+    "id": "Qwen3.6-27B-rdna16-64k-q8kv-mtp-short-only",
+    "family": "Qwen3.6",
+    "architecture": "dense",
+    "parameter_class": "27B",
+    "quant": "UD-IQ3_XXS",
+    "source": "unsloth Qwen3.6 MTP GGUF"
+  },
+  "serving": {
+    "kv_cache_k": "q8_0",
+    "kv_cache_v": "q8_0",
+    "batch_size": 512,
+    "ubatch_size": 256,
+    "gpu_layers": 99,
+    "parallel": 1,
+    "speculation": "draft-mtp",
+    "speculation_n": 3,
+    "thinking": "on"
+  },
+  "profile": "data/benchmark-profiles/high-context.json",
+  "context": {
+    "target_tokens": 65536,
+    "minimum_useful_tokens": 32768
+  },
+  "known_evidence": [
+    "data/results/rx6900xt-qwen36-compute-q8-short-20260523.json",
+    "data/results/rx6900xt-qwen36-mtp-q8-short-20260523.json"
+  ],
+  "caveats": [
+    "Evidence is RX 6900 XT-specific (gfx1030, ROCm/HIP); do not generalize to RX 9070 XT or other 16GB Radeon cards.",
+    "q8_0 KV is the recommendation floor for this preset; lower KV variants are exploratory only.",
+    "The short-only batch shape means long-prompt (high-context) sustained generation has not been validated and likely does not fit on one 16GB card.",
+    "Seed rows under known_evidence mix COMPUTE and 3D_FULL_SCREEN power profiles and were captured with request-level disable_thinking; they are provenance, not evidence for this candidate's COMPUTE thinking route.",
+    "This preset is a candidate until the uncached high-context profile (unique leading nonce, cache_prompt=false, sustained generation) passes a review."
+  ]
+}

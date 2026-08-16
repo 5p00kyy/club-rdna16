@@ -1,0 +1,389 @@
+{
+  "presets": [
+    {
+      "preset": {
+        "schema_version": "1.0",
+        "id": "rx6900xt-qwen36-27b-iq3xxs-64k-q8-mtp",
+        "title": "Qwen3.6 27B IQ3_XXS 64K q8 MTP short-only on one RX 6900 XT (ROCm/HIP, COMPUTE)",
+        "status": "candidate",
+        "provenance": "seed-tested",
+        "purpose": "Dense 27B q8 short-context route with built-in MTP draft-mtp n=3 at b512/ub256; the reduced batch size is required because long-prefix MTP prefill does not fit at the full batch.",
+        "hardware": {
+          "lane": "1x-rdna16",
+          "gpu_count": 1,
+          "gpu_model": "AMD Radeon RX 6900 XT",
+          "architecture_family": "RDNA2",
+          "architecture_target": "gfx1030",
+          "vram_per_gpu_gb": 16,
+          "power_profile": "COMPUTE"
+        },
+        "runtime": {
+          "engine": "llama.cpp",
+          "backend": "ROCm/HIP",
+          "backend_target": "gfx1030",
+          "preset_file": "examples/llamacpp-rx6900xt-qwen36-27b.ini",
+          "preset_section": "Qwen3.6-27B-rdna16-64k-q8kv-mtp-short-only"
+        },
+        "model": {
+          "id": "Qwen3.6-27B-rdna16-64k-q8kv-mtp-short-only",
+          "family": "Qwen3.6",
+          "architecture": "dense",
+          "parameter_class": "27B",
+          "quant": "UD-IQ3_XXS",
+          "source": "unsloth Qwen3.6 MTP GGUF"
+        },
+        "serving": {
+          "kv_cache_k": "q8_0",
+          "kv_cache_v": "q8_0",
+          "batch_size": 512,
+          "ubatch_size": 256,
+          "gpu_layers": 99,
+          "parallel": 1,
+          "speculation": "draft-mtp",
+          "speculation_n": 3,
+          "thinking": "on"
+        },
+        "profile": "data/benchmark-profiles/high-context.json",
+        "context": {
+          "target_tokens": 65536,
+          "minimum_useful_tokens": 32768
+        },
+        "known_evidence": [
+          "data/results/rx6900xt-qwen36-compute-q8-short-20260523.json",
+          "data/results/rx6900xt-qwen36-mtp-q8-short-20260523.json"
+        ],
+        "caveats": [
+          "Evidence is RX 6900 XT-specific (gfx1030, ROCm/HIP); do not generalize to RX 9070 XT or other 16GB Radeon cards.",
+          "q8_0 KV is the recommendation floor for this preset; lower KV variants are exploratory only.",
+          "The short-only batch shape means long-prompt (high-context) sustained generation has not been validated and likely does not fit on one 16GB card.",
+          "Seed rows under known_evidence mix COMPUTE and 3D_FULL_SCREEN power profiles and were captured with request-level disable_thinking; they are provenance, not evidence for this candidate's COMPUTE thinking route.",
+          "This preset is a candidate until the uncached high-context profile (unique leading nonce, cache_prompt=false, sustained generation) passes a review."
+        ],
+        "_source_file": "data/presets/rx6900xt-qwen36-27b-iq3xxs-64k-q8-mtp.json"
+      },
+      "published_evidence": [],
+      "candidate_evidence": [],
+      "archived_evidence": [],
+      "ready_for_default": false
+    },
+    {
+      "preset": {
+        "schema_version": "1.0",
+        "id": "rx6900xt-qwen36-35b-a3b-iq3xxs-100k-q8-mtp-vulkan",
+        "title": "Qwen3.6 35B-A3B IQ3_XXS 100K q8 MTP on one RX 6900 XT (Vulkan, 3D_FULL_SCREEN)",
+        "status": "candidate",
+        "provenance": "seed-tested",
+        "purpose": "100K q8 MTP route with built-in draft-mtp n=3 at b512/ub256 on one RX 6900 XT via the Mesa RADV Vulkan build.",
+        "hardware": {
+          "lane": "1x-rdna16",
+          "gpu_count": 1,
+          "gpu_model": "AMD Radeon RX 6900 XT",
+          "architecture_family": "RDNA2",
+          "architecture_target": "gfx1030",
+          "vram_per_gpu_gb": 16,
+          "power_profile": "3D_FULL_SCREEN"
+        },
+        "runtime": {
+          "engine": "llama.cpp",
+          "backend": "Vulkan",
+          "backend_target": "gfx1030",
+          "preset_file": "examples/llamacpp-rx6900xt-qwen36-35b-a3b.ini",
+          "preset_section": "Qwen3.6-35B-A3B-rdna16-100k-q8kv-mtp"
+        },
+        "model": {
+          "id": "Qwen3.6-35B-A3B-rdna16-100k-q8kv-mtp-vulkan",
+          "family": "Qwen3.6",
+          "architecture": "moe",
+          "parameter_class": "35B-A3B",
+          "quant": "UD-IQ3_XXS",
+          "source": "unsloth Qwen3.6 MTP GGUF"
+        },
+        "serving": {
+          "kv_cache_k": "q8_0",
+          "kv_cache_v": "q8_0",
+          "batch_size": 512,
+          "ubatch_size": 256,
+          "gpu_layers": 99,
+          "parallel": 1,
+          "speculation": "draft-mtp",
+          "speculation_n": 3,
+          "thinking": "on"
+        },
+        "profile": "data/benchmark-profiles/high-context.json",
+        "context": {
+          "target_tokens": 102400,
+          "minimum_useful_tokens": 65536
+        },
+        "known_evidence": [
+          "data/results/rx6900xt-qwen36-vulkan-mtp-q8-20260523.json"
+        ],
+        "caveats": [
+          "Evidence is RX 6900 XT-specific (gfx1030, Vulkan RADV Mesa 26.2.0-devel); do not generalize to RX 9070 XT or other 16GB Radeon cards.",
+          "This Vulkan route was measured under the 3D_FULL_SCREEN power profile; the COMPUTE profile rows are a separate preset lane (ROCm/HIP).",
+          "q8_0 KV is the recommendation floor for this preset; lower KV variants are exploratory only.",
+          "The seed Vulkan row under known_evidence was captured with request-level disable_thinking; it is provenance for the fit, not evidence for this candidate's thinking route.",
+          "This preset is a candidate until the uncached high-context profile (unique leading nonce, cache_prompt=false, sustained generation) passes a review."
+        ],
+        "_source_file": "data/presets/rx6900xt-qwen36-35b-a3b-iq3xxs-100k-q8-mtp-vulkan.json"
+      },
+      "published_evidence": [],
+      "candidate_evidence": [],
+      "archived_evidence": [],
+      "ready_for_default": false
+    },
+    {
+      "preset": {
+        "schema_version": "1.0",
+        "id": "rx6900xt-qwen36-35b-a3b-iq3xxs-100k-q8-mtp",
+        "title": "Qwen3.6 35B-A3B IQ3_XXS 100K q8 MTP on one RX 6900 XT (ROCm/HIP, COMPUTE)",
+        "status": "alternative",
+        "provenance": "seed-tested",
+        "purpose": "100K q8 MTP route with built-in draft-mtp n=3 at b512/ub256 on one RX 6900 XT via ROCm/HIP.",
+        "hardware": {
+          "lane": "1x-rdna16",
+          "gpu_count": 1,
+          "gpu_model": "AMD Radeon RX 6900 XT",
+          "architecture_family": "RDNA2",
+          "architecture_target": "gfx1030",
+          "vram_per_gpu_gb": 16,
+          "power_profile": "COMPUTE"
+        },
+        "runtime": {
+          "engine": "llama.cpp",
+          "backend": "ROCm/HIP",
+          "backend_target": "gfx1030",
+          "preset_file": "examples/llamacpp-rx6900xt-qwen36-35b-a3b.ini",
+          "preset_section": "Qwen3.6-35B-A3B-rdna16-100k-q8kv-mtp"
+        },
+        "model": {
+          "id": "Qwen3.6-35B-A3B-rdna16-100k-q8kv-mtp",
+          "family": "Qwen3.6",
+          "architecture": "moe",
+          "parameter_class": "35B-A3B",
+          "quant": "UD-IQ3_XXS",
+          "source": "unsloth Qwen3.6 MTP GGUF"
+        },
+        "serving": {
+          "kv_cache_k": "q8_0",
+          "kv_cache_v": "q8_0",
+          "batch_size": 512,
+          "ubatch_size": 256,
+          "gpu_layers": 99,
+          "parallel": 1,
+          "speculation": "draft-mtp",
+          "speculation_n": 3,
+          "thinking": "on"
+        },
+        "profile": "data/benchmark-profiles/high-context.json",
+        "context": {
+          "target_tokens": 102400,
+          "minimum_useful_tokens": 65536
+        },
+        "known_evidence": [
+          "data/evidence/rx6900xt-qwen36-35b-a3b-iq3xxs-100k-q8-mtp-102400.json",
+          "data/results/rx6900xt-qwen36-compute-q8-short-20260523.json",
+          "data/long-context/rx6900xt-qwen36-35b-a3b-100k-q8-mtp-needle300k-compute-nothink.json"
+        ],
+        "caveats": [
+          "Evidence is RX 6900 XT-specific (gfx1030, ROCm/HIP); do not generalize to RX 9070 XT or other 16GB Radeon cards.",
+          "q8_0 KV is the recommendation floor for this preset; lower KV variants are exploratory only.",
+          "Historical seed rows under known_evidence were captured with request-level disable_thinking; the published 102400-token bundle separately validates this preset with thinking enabled.",
+          "The published profile used a 1024-token retrieval allowance so hidden reasoning could finish before the required client-visible exact answer; its preceding 512-token diagnostic is disclosed with the evidence."
+        ],
+        "_source_file": "data/presets/rx6900xt-qwen36-35b-a3b-iq3xxs-100k-q8-mtp.json"
+      },
+      "published_evidence": [
+        {
+          "schema_version": "1.0",
+          "id": "rx6900xt-qwen36-35b-a3b-iq3xxs-100k-q8-mtp-102400",
+          "preset": "rx6900xt-qwen36-35b-a3b-iq3xxs-100k-q8-mtp",
+          "status": "published",
+          "provenance": "seed-tested",
+          "hardware": {
+            "gpu_count": 1,
+            "gpu_model": "AMD Radeon RX 6900 XT",
+            "architecture_target": "gfx1030",
+            "power_profile": "COMPUTE"
+          },
+          "runtime": {
+            "backend": "ROCm/HIP",
+            "engine": "llama.cpp",
+            "version": "0.1.0-dev build 10450",
+            "commit": "ece963f41"
+          },
+          "context": {
+            "highest_useful_tokens": 102400,
+            "server_effective_tokens": 102400,
+            "server_configured_tokens": 102400,
+            "actual_prompt_tokens": {
+              "retrieval": 90178,
+              "sustained_generation": 71763
+            },
+            "validated_for": "Uncached long-context retrieval and sustained generation with thinking enabled, q8_0 KV, parallel=1, and built-in draft-MTP."
+          },
+          "evidence": {
+            "checks": {
+              "retrieval_repeats": 2,
+              "sustained_generation_repeats": 2,
+              "prompt_cache_disabled": true,
+              "unique_leading_request_nonce": true,
+              "thinking_disabled_explicitly": false,
+              "visible_final_content_required": true,
+              "retrieval_output_tokens": 1024,
+              "sustained_output_tokens": 3072,
+              "minimum_generated_tokens": 1076
+            },
+            "metrics": {
+              "median_prefill_tok_s": 870.81,
+              "median_decode_tok_s": 56.521,
+              "retrieval_decode_tok_s": 68.992,
+              "median_draft_acceptance_rate": 0.922
+            }
+          },
+          "source_receipts": [
+            "data/evidence/receipts/rx6900xt-qwen36-35b-a3b-iq3xxs-100k-q8-mtp-20260816-pass.json",
+            "data/evidence/receipts/rx6900xt-qwen36-35b-a3b-iq3xxs-100k-q8-mtp-20260816-512-token-diagnostic.json"
+          ],
+          "caveats": [
+            "Measured only on one AMD Radeon RX 6900 XT (gfx1030) through ROCm/HIP under the COMPUTE power profile; do not generalize to other 16GB Radeon cards.",
+            "Thinking remained enabled. The passing profile allowed up to 1024 retrieval output tokens so the model could finish hidden reasoning and emit the required visible exact answer.",
+            "A preceding 512-token retrieval allowance produced one visible-answer failure out of two retrieval checks despite passing prompt coverage and sustained generation; that sanitized diagnostic receipt is published alongside the passing run.",
+            "The result validates this exact 100K q8_0-KV, parallel=1, built-in draft-MTP preset; changing backend, KV precision, parallelism, speculation, or power profile is a different lane."
+          ],
+          "_source_file": "data/evidence/rx6900xt-qwen36-35b-a3b-iq3xxs-100k-q8-mtp-102400.json"
+        }
+      ],
+      "candidate_evidence": [],
+      "archived_evidence": [],
+      "ready_for_default": true
+    },
+    {
+      "preset": {
+        "schema_version": "1.0",
+        "id": "rx6900xt-qwen36-35b-a3b-iq3xxs-131k-q8-nomtp",
+        "title": "Qwen3.6 35B-A3B IQ3_XXS 131K q8 no-MTP on one RX 6900 XT (ROCm/HIP, COMPUTE)",
+        "status": "candidate",
+        "provenance": "seed-tested",
+        "purpose": "Stable 131K q8 route on one RX 6900 XT via ROCm/HIP with full b1024/ub512 and no speculation.",
+        "hardware": {
+          "lane": "1x-rdna16",
+          "gpu_count": 1,
+          "gpu_model": "AMD Radeon RX 6900 XT",
+          "architecture_family": "RDNA2",
+          "architecture_target": "gfx1030",
+          "vram_per_gpu_gb": 16,
+          "power_profile": "COMPUTE"
+        },
+        "runtime": {
+          "engine": "llama.cpp",
+          "backend": "ROCm/HIP",
+          "backend_target": "gfx1030",
+          "preset_file": "examples/llamacpp-rx6900xt-qwen36-35b-a3b.ini",
+          "preset_section": "Qwen3.6-35B-A3B-rdna16-131k-q8kv-nomtp"
+        },
+        "model": {
+          "id": "Qwen3.6-35B-A3B-rdna16-131k-q8kv-nomtp",
+          "family": "Qwen3.6",
+          "architecture": "moe",
+          "parameter_class": "35B-A3B",
+          "quant": "UD-IQ3_XXS",
+          "source": "unsloth Qwen3.6 MTP GGUF"
+        },
+        "serving": {
+          "kv_cache_k": "q8_0",
+          "kv_cache_v": "q8_0",
+          "batch_size": 1024,
+          "ubatch_size": 512,
+          "gpu_layers": 99,
+          "parallel": 1,
+          "speculation": "none",
+          "thinking": "on"
+        },
+        "profile": "data/benchmark-profiles/high-context.json",
+        "context": {
+          "target_tokens": 131072,
+          "minimum_useful_tokens": 65536
+        },
+        "known_evidence": [
+          "data/results/rx6900xt-qwen36-35b-a3b-131k-q8-nomtp-short.json",
+          "data/results/rx6900xt-qwen36-compute-q8-short-20260523.json",
+          "data/long-context/rx6900xt-qwen36-35b-a3b-131k-q8-nomtp-needle300k-compute-nothink.json"
+        ],
+        "caveats": [
+          "Evidence is RX 6900 XT-specific (gfx1030, ROCm/HIP); do not generalize to RX 9070 XT or other 16GB Radeon cards.",
+          "q8_0 KV is the recommendation floor for this preset; lower KV variants are exploratory only.",
+          "Seed rows under known_evidence were captured with request-level disable_thinking; they are provenance for the fit, not evidence for this candidate's thinking route.",
+          "This preset is a candidate until the uncached high-context profile (unique leading nonce, cache_prompt=false, sustained generation) passes a review."
+        ],
+        "_source_file": "data/presets/rx6900xt-qwen36-35b-a3b-iq3xxs-131k-q8-nomtp.json"
+      },
+      "published_evidence": [],
+      "candidate_evidence": [],
+      "archived_evidence": [],
+      "ready_for_default": false
+    },
+    {
+      "preset": {
+        "schema_version": "1.0",
+        "id": "rx6900xt-qwen38-27b-iq3xxs-64k-q8-mtp",
+        "title": "Qwen3.8 27B IQ3_XXS 64K q8 MTP canonical candidate on one RX 6900 XT (ROCm/HIP, COMPUTE)",
+        "status": "candidate",
+        "provenance": "community-submitted",
+        "purpose": "Canonical dense 27B lane for the next evidence candidate: Qwen3.8-27B UD-IQ3_XXS at 64K with q8_0 K/V, parallel=1, and built-in llama.cpp draft-MTP n=2 / p-min=0.1 at b512/ub128 on one RX 6900 XT. The model id/alias below is the one a metadata-complete rerun must record.",
+        "hardware": {
+          "lane": "1x-rdna16",
+          "gpu_count": 1,
+          "gpu_model": "AMD Radeon RX 6900 XT",
+          "architecture_family": "RDNA2",
+          "architecture_target": "gfx1030",
+          "vram_per_gpu_gb": 16,
+          "power_profile": "COMPUTE"
+        },
+        "runtime": {
+          "engine": "llama.cpp",
+          "backend": "ROCm/HIP",
+          "backend_target": "gfx1030",
+          "preset_file": "examples/llamacpp-rx6900xt-qwen38-27b.ini",
+          "preset_section": "Qwen3.8-27B-rdna16-64k-q8kv-mtp"
+        },
+        "model": {
+          "id": "qwen38-27b-iq3xxs-rdna16-64k",
+          "family": "Qwen3.8",
+          "architecture": "dense",
+          "parameter_class": "27B",
+          "quant": "UD-IQ3_XXS",
+          "source": "unsloth Qwen3.8-27B-GGUF"
+        },
+        "serving": {
+          "kv_cache_k": "q8_0",
+          "kv_cache_v": "q8_0",
+          "batch_size": 512,
+          "ubatch_size": 128,
+          "gpu_layers": 99,
+          "parallel": 1,
+          "speculation": "draft-mtp",
+          "speculation_n": 2,
+          "thinking": "on"
+        },
+        "profile": "data/benchmark-profiles/high-context.json",
+        "context": {
+          "target_tokens": 65536,
+          "minimum_useful_tokens": 32768
+        },
+        "known_evidence": [],
+        "caveats": [
+          "RX 6900 XT-specific (gfx1030, ROCm/HIP, COMPUTE); do not generalize to RX 9070 XT or other 16GB Radeon cards.",
+          "known_evidence is empty: this candidate has not passed a reviewed metadata-complete high-context rerun. The earlier raw run stayed in the ignored .local/bench tree and is not public evidence.",
+          "q8_0 KV is the recommendation floor for this preset; lower KV variants are exploratory only.",
+          "Exact served shape: b512/ub128, parallel=1, built-in draft-MTP n=2 / p-min=0.1, jinja on, reasoning on (auto), temp 1.0, top-k 20, top-p 0.95, min-p 0, presence-penalty 0, repeat-penalty 1.0.",
+          "Status stays candidate until a maintainer publishes a reviewed evidence bundle; promotion is manual."
+        ],
+        "_source_file": "data/presets/rx6900xt-qwen38-27b-iq3xxs-64k-q8-mtp.json"
+      },
+      "published_evidence": [],
+      "candidate_evidence": [],
+      "archived_evidence": [],
+      "ready_for_default": false
+    }
+  ]
+}

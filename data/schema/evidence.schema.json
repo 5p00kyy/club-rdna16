@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "club-rdna16/evidence.schema.json",
+  "title": "Reviewed public evidence bundle",
+  "description": "Reviewed evidence that ties a preset to measured context fit. scripts/validate_evidence.py enforces the runtime checks (receipt files exist, privacy-stripped, preset match, AMD operating-point identity).",
+  "type": "object",
+  "required": ["schema_version", "id", "preset", "status", "provenance", "hardware", "runtime", "context", "evidence", "caveats"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "id": { "type": "string", "minLength": 1 },
+    "preset": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["candidate", "published", "archived"] },
+    "provenance": { "enum": ["seed-tested", "community-verified"] },
+    "hardware": {
+      "type": "object",
+      "required": ["gpu_count", "gpu_model", "architecture_target", "power_profile"],
+      "properties": {
+        "gpu_count": { "type": "integer", "minimum": 1 },
+        "gpu_model": { "type": "string", "minLength": 1 },
+        "architecture_target": { "type": "string", "pattern": "^gfx[0-9]+$" },
+        "power_profile": { "enum": ["COMPUTE", "3D_FULL_SCREEN", "default", "unknown"] }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "required": ["backend"],
+      "properties": {
+        "backend": { "enum": ["ROCm/HIP", "Vulkan", "CUDA", "other"] },
+        "engine": { "type": "string", "minLength": 1 },
+        "version": { "type": "string" },
+        "commit": { "type": "string" }
+      }
+    },
+    "context": {
+      "type": "object",
+      "required": ["highest_useful_tokens", "actual_prompt_tokens", "validated_for"],
+      "properties": {
+        "highest_useful_tokens": { "type": "integer", "minimum": 1 },
+        "server_effective_tokens": { "type": ["integer", "null"] },
+        "server_configured_tokens": { "type": ["integer", "null"] },
+        "actual_prompt_tokens": {
+          "oneOf": [
+            { "type": "integer", "minimum": 1 },
+            {
+              "type": "object",
+              "properties": {
+                "retrieval": { "type": "integer", "minimum": 1 },
+                "sustained_generation": { "type": "integer", "minimum": 1 }
+              }
+            }
+          ]
+        },
+        "validated_for": { "type": "string", "minLength": 1 }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["checks", "metrics"],
+      "properties": {
+        "checks": {
+          "type": "object",
+          "required": ["retrieval_repeats", "sustained_generation_repeats", "prompt_cache_disabled", "unique_leading_request_nonce", "thinking_disabled_explicitly", "retrieval_output_tokens", "sustained_output_tokens", "minimum_generated_tokens"],
+          "properties": {
+            "retrieval_repeats": { "type": "integer", "minimum": 1 },
+            "sustained_generation_repeats": { "type": "integer", "minimum": 0 },
+            "prompt_cache_disabled": { "const": true },
+            "unique_leading_request_nonce": { "const": true },
+            "thinking_disabled_explicitly": { "type": "boolean" },
+            "visible_final_content_required": { "type": "boolean" },
+            "retrieval_output_tokens": { "type": "integer", "minimum": 1 },
+            "sustained_output_tokens": { "type": "integer", "minimum": 1 },
+            "minimum_generated_tokens": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "metrics": {
+          "type": "object",
+          "required": ["median_prefill_tok_s", "median_decode_tok_s"],
+          "properties": {
+            "median_prefill_tok_s": { "type": "number", "exclusiveMinimum": 0 },
+            "median_decode_tok_s": { "type": "number", "exclusiveMinimum": 0 },
+            "retrieval_decode_tok_s": { "type": "number", "exclusiveMinimum": 0 },
+            "median_draft_acceptance_rate": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        }
+      }
+    },
+    "source_receipts": { "type": "array", "items": { "type": "string" } },
+    "caveats": { "type": "array", "items": { "type": "string" } }
+  }
+}

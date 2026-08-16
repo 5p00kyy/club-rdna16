@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0",
+  "id": "rx6900xt-qwen36-35b-a3b-iq3xxs-100k-q8-mtp-102400",
+  "preset": "rx6900xt-qwen36-35b-a3b-iq3xxs-100k-q8-mtp",
+  "status": "published",
+  "provenance": "seed-tested",
+  "hardware": {
+    "gpu_count": 1,
+    "gpu_model": "AMD Radeon RX 6900 XT",
+    "architecture_target": "gfx1030",
+    "power_profile": "COMPUTE"
+  },
+  "runtime": {
+    "backend": "ROCm/HIP",
+    "engine": "llama.cpp",
+    "version": "0.1.0-dev build 10450",
+    "commit": "ece963f41"
+  },
+  "context": {
+    "highest_useful_tokens": 102400,
+    "server_effective_tokens": 102400,
+    "server_configured_tokens": 102400,
+    "actual_prompt_tokens": {
+      "retrieval": 90178,
+      "sustained_generation": 71763
+    },
+    "validated_for": "Uncached long-context retrieval and sustained generation with thinking enabled, q8_0 KV, parallel=1, and built-in draft-MTP."
+  },
+  "evidence": {
+    "checks": {
+      "retrieval_repeats": 2,
+      "sustained_generation_repeats": 2,
+      "prompt_cache_disabled": true,
+      "unique_leading_request_nonce": true,
+      "thinking_disabled_explicitly": false,
+      "visible_final_content_required": true,
+      "retrieval_output_tokens": 1024,
+      "sustained_output_tokens": 3072,
+      "minimum_generated_tokens": 1076
+    },
+    "metrics": {
+      "median_prefill_tok_s": 870.81,
+      "median_decode_tok_s": 56.521,
+      "retrieval_decode_tok_s": 68.992,
+      "median_draft_acceptance_rate": 0.922
+    }
+  },
+  "source_receipts": [
+    "data/evidence/receipts/rx6900xt-qwen36-35b-a3b-iq3xxs-100k-q8-mtp-20260816-pass.json",
+    "data/evidence/receipts/rx6900xt-qwen36-35b-a3b-iq3xxs-100k-q8-mtp-20260816-512-token-diagnostic.json"
+  ],
+  "caveats": [
+    "Measured only on one AMD Radeon RX 6900 XT (gfx1030) through ROCm/HIP under the COMPUTE power profile; do not generalize to other 16GB Radeon cards.",
+    "Thinking remained enabled. The passing profile allowed up to 1024 retrieval output tokens so the model could finish hidden reasoning and emit the required visible exact answer.",
+    "A preceding 512-token retrieval allowance produced one visible-answer failure out of two retrieval checks despite passing prompt coverage and sustained generation; that sanitized diagnostic receipt is published alongside the passing run.",
+    "The result validates this exact 100K q8_0-KV, parallel=1, built-in draft-MTP preset; changing backend, KV precision, parallelism, speculation, or power profile is a different lane."
+  ]
+}

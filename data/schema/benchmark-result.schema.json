@@ -72,6 +72,18 @@
           "type": "number",
           "minimum": 1
         },
+        "architecture_target": {
+          "anyOf": [
+            { "type": "string", "pattern": "^gfx[0-9]+$" },
+            { "const": "unknown" },
+            { "type": "null" }
+          ],
+          "description": "Exact gfx target when measured (gfx1030, gfx1201, ...); 'unknown' when the historical row did not record it."
+        },
+        "power_profile": {
+          "enum": ["COMPUTE", "3D_FULL_SCREEN", "default", "unknown", null],
+          "description": "amdgpu/LACT power profile in effect for the run; 'unknown' when the historical row did not record it."
+        },
         "driver": {
           "type": "string"
         },
@@ -100,6 +112,17 @@
         "engine": {
           "type": "string",
           "enum": ["llama.cpp", "ik_llama.cpp", "BeeLlama", "vLLM", "SGLang", "other"]
+        },
+        "backend": {
+          "enum": ["ROCm/HIP", "Vulkan", "CUDA", "other", "unknown", null],
+          "description": "Measured backend when recorded; 'unknown' means the historical row did not state it and it must not be inferred."
+        },
+        "backend_target": {
+          "anyOf": [
+            { "type": "string", "pattern": "^gfx[0-9]+$" },
+            { "const": "unknown" },
+            { "type": "null" }
+          ]
         },
         "version": {
           "type": "string"

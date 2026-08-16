@@ -33,6 +33,9 @@ PROMPT_SETS = {
     "custom",
 }
 HARDWARE_LANES = {"1x-rdna16", "2x-rdna16", "multi-rdna16", "other-radeon-16gb", "other-amd", "unknown"}
+BACKENDS = {"ROCm/HIP", "Vulkan", "CUDA", "other", "unknown"}
+POWER_PROFILES = {"COMPUTE", "3D_FULL_SCREEN", "default", "unknown"}
+GFX_RE = re.compile(r"^gfx[0-9]+$")
 
 PRIVATE_IPV4_RE = re.compile(r"\b(192\.168|10\.[0-9]{1,3}|172\.(1[6-9]|2[0-9]|3[0-1]))(\.[0-9]{1,3}){2}\b")
 TOKEN_RE = re.compile(r"(Bearer\s+[A-Za-z0-9._-]{10,}|hf_[A-Za-z0-9]{10,}|sk-[A-Za-z0-9]{10,})")
@@ -104,9 +107,19 @@ def validate_result(result, label, allow_private=False):
     require(isinstance(hardware.get("gpu_count"), int), errors, f"{label}: hardware.gpu_count must be an integer")
     require(bool(hardware.get("gpu_model")), errors, f"{label}: hardware.gpu_model is required")
     require(isinstance(hardware.get("vram_per_gpu_gb"), (int, float)), errors, f"{label}: hardware.vram_per_gpu_gb must be numeric")
+    if hardware.get("power_profile") is not None:
+        require(hardware.get("power_profile") in POWER_PROFILES, errors, f"{label}: hardware.power_profile is invalid (use COMPUTE, 3D_FULL_SCREEN, default, or unknown)")
+    if hardware.get("architecture_target") is not None:
+        require(hardware.get("architecture_target") == "unknown" or GFX_RE.fullmatch(hardware.get("architecture_target", "")),
+            errors, f"{label}: hardware.architecture_target must be an explicit gfx target (e.g. gfx1030) or 'unknown'")
 
     runtime = result.get("runtime") or {}
     require(runtime.get("engine") in ENGINES, errors, f"{label}: runtime.engine is invalid")
+    if runtime.get("backend") is not None:
+        require(runtime.get("backend") in BACKENDS, errors, f"{label}: runtime.backend is invalid (use ROCm/HIP, Vulkan, CUDA, other, or unknown)")
+    if runtime.get("backend_target") is not None:
+        require(runtime.get("backend_target") == "unknown" or GFX_RE.fullmatch(runtime.get("backend_target", "")),
+            errors, f"{label}: runtime.backend_target must be an explicit gfx target (e.g. gfx1030) or 'unknown'")
 
     model = result.get("model") or {}
     require(bool(model.get("id")), errors, f"{label}: model.id is required")
@@ -216,6 +229,12 @@ def validate_dataset(results):
         if level in {"benchmark", "verified"} and prompt_set != "legacy":
             if not has_metric(result, "decode_tok_s", "prompt_tok_s", "end_to_end_tok_s"):
                 errors.append(f"{label}: benchmark/verified rows need comparable speed metrics")
+            runtime = result.get("runtime") or {}
+            hardware = result.get("hardware") or {}
+            if not runtime.get("backend"):
+                errors.append(f"{label}: benchmark/verified rows must record runtime.backend explicitly (ROCm/HIP, Vulkan, CUDA, other, or unknown when not measured)")
+            if not hardware.get("power_profile"):
+                errors.append(f"{label}: benchmark/verified rows must record hardware.power_profile explicitly (COMPUTE, 3D_FULL_SCREEN, default, or unknown when not measured)")
 
         if level == "deprecated" and prompt_set == "legacy" and not has_metric(result, "decode_tok_s", "prompt_tok_s", "end_to_end_tok_s"):
             if "fit-only" not in notes:

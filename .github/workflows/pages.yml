@@ -33,8 +33,17 @@ jobs:
       - name: Validate result files
         run: python3 scripts/validate_results.py data/results
 
+      - name: Validate preset manifests
+        run: python3 scripts/validate_presets.py data/presets
+
+      - name: Validate evidence bundles
+        run: python3 scripts/validate_evidence.py data/evidence
+
       - name: Build site data
         run: python3 scripts/build_site_data.py --results-dir data/results --output site/data/results.json
+
+      - name: Build preset data
+        run: python3 scripts/build_preset_data.py --output site/data/presets.json
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "club-rdna16/preset.schema.json",
+  "title": "Canonical preset manifest",
+  "description": "A copyable serving preset for one AMD Radeon lane. scripts/validate_presets.py enforces the runtime checks (file exists, section present, lane/profile valid).",
+  "type": "object",
+  "required": [
+    "schema_version", "id", "title", "status", "provenance", "purpose",
+    "hardware", "runtime", "model", "serving", "profile", "context"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "id": { "type": "string", "minLength": 1 },
+    "title": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["candidate", "recommended", "alternative", "experimental", "archived"] },
+    "provenance": { "enum": ["seed-tested", "community-verified", "community-submitted"] },
+    "purpose": { "type": "string", "minLength": 1 },
+    "hardware": {
+      "type": "object",
+      "required": ["lane", "gpu_count", "gpu_model", "architecture_family", "architecture_target", "vram_per_gpu_gb", "power_profile"],
+      "properties": {
+        "lane": { "enum": ["1x-rdna16", "2x-rdna16", "multi-rdna16", "other-radeon-16gb", "other-amd", "unknown"] },
+        "gpu_count": { "type": "integer", "minimum": 1 },
+        "gpu_model": { "type": "string", "minLength": 1 },
+        "architecture_family": { "type": "string", "minLength": 1 },
+        "architecture_target": { "type": "string", "pattern": "^gfx[0-9]+$" },
+        "vram_per_gpu_gb": { "type": "integer", "minimum": 1 },
+        "power_profile": { "enum": ["COMPUTE", "3D_FULL_SCREEN", "default", "unknown"] }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "required": ["engine", "backend", "preset_file", "preset_section"],
+      "properties": {
+        "engine": { "type": "string", "minLength": 1 },
+        "backend": { "enum": ["ROCm/HIP", "Vulkan", "CUDA", "other"] },
+        "backend_target": { "type": "string", "pattern": "^gfx[0-9]+$" },
+        "preset_file": { "type": "string", "minLength": 1 },
+        "preset_section": { "type": "string", "minLength": 1 }
+      }
+    },
+    "model": {
+      "type": "object",
+      "required": ["id", "family", "architecture", "parameter_class", "quant", "source"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "family": { "type": "string", "minLength": 1 },
+        "architecture": { "enum": ["dense", "moe", "hybrid", "unknown"] },
+        "parameter_class": { "type": "string", "minLength": 1 },
+        "quant": { "type": "string", "minLength": 1 },
+        "source": { "type": "string", "minLength": 1 }
+      }
+    },
+    "serving": {
+      "type": "object",
+      "required": ["kv_cache_k", "kv_cache_v", "parallel", "speculation", "thinking"],
+      "properties": {
+        "kv_cache_k": { "type": "string", "minLength": 1 },
+        "kv_cache_v": { "type": "string", "minLength": 1 },
+        "batch_size": { "type": "integer", "minimum": 1 },
+        "ubatch_size": { "type": "integer", "minimum": 1 },
+        "gpu_layers": { "type": "integer", "minimum": 0 },
+        "parallel": { "type": "integer", "minimum": 1 },
+        "speculation": { "enum": ["none", "draft-mtp", "draft", "other"] },
+        "speculation_n": { "type": "integer", "minimum": 1 },
+        "thinking": { "enum": ["on", "off"] }
+      }
+    },
+    "profile": { "type": "string", "minLength": 1 },
+    "context": {
+      "type": "object",
+      "required": ["target_tokens", "minimum_useful_tokens"],
+      "properties": {
+        "target_tokens": { "type": "integer", "minimum": 1 },
+        "minimum_useful_tokens": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "known_evidence": { "type": "array", "items": { "type": "string" } },
+    "caveats": { "type": "array", "items": { "type": "string" } }
+  }
+}

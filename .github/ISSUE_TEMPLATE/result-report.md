@@ -11,6 +11,10 @@ labels: result
 - [ ] I validated my JSON with python3 scripts/validate_results.py PATH_TO_RESULT_JSON.
 - [ ] I attached or linked the result JSON file.
 
+> Preset/evidence work instead of a raw row? Raw receipts stay in `.local/bench/`
+> until a maintainer promotes a reviewed bundle. See
+> `docs/preset-evidence-workflow.md`.
+
 ## Hardware
 
 - Hardware lane:

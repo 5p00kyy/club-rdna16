@@ -12,6 +12,7 @@ This is not a synthetic leaderboard. A result is only useful when it includes en
 | --- | --- |
 | `docs/project-plan.md` | You want the repo roadmap and release checklist. |
 | `docs/benchmark-protocol.md` | You want comparable-result rules and prompt sets. |
+| `docs/preset-evidence-workflow.md` | You want to promote a preset from seed rows to published evidence. |
 | `docs/hardware-lanes.md` | You want to understand RX 6900 XT vs RX 9070 XT vs other AMD result grouping. |
 | `docs/rx-6900-xt-baseline.md` | You want the first tested hardware/software baseline. |
 | `docs/qwen36-profiles.md` | You want Qwen3.6 27B and 35B-A3B context/KV recommendations. |
@@ -30,31 +31,45 @@ Seed hardware:
 - Runtime: upstream llama.cpp HIP build plus a sidecar Vulkan build from the same llama.cpp commit
 - ROCm packages observed locally: 7.2.x family
 - Vulkan stack observed locally: RADV / Mesa 26.2.0-devel
-- Current models: Unsloth Qwen3.6 27B MTP GGUF and Qwen3.6 35B-A3B MTP GGUF, both `UD-IQ3_XXS`
+- Current benchmark models: Unsloth Qwen3.6 27B MTP GGUF and Qwen3.6 35B-A3B MTP GGUF, both `UD-IQ3_XXS`. The Qwen3.6 35B-A3B 100K q8 MTP lane is the first published tested preset. Qwen3.8 27B `UD-IQ3_XXS` is the next canonical evidence candidate and still needs a metadata-complete rerun.
 
 Important first finding: keep q8 KV as the default target on this card. The current seed data has separate evidence for ROCm/HIP under `COMPUTE` and `3D_FULL_SCREEN`, plus Vulkan under `3D_FULL_SCREEN`. Backend and power-profile rows should be compared as separate lanes.
 
-## Recommended First Profiles
+## Tested And Candidate Profiles
+
+The Qwen3.6 35B-A3B 100K q8 MTP route is the first published tested preset. The
+remaining rows are seed-tested or community-submitted candidates awaiting the
+same reviewed evidence path. All profiles below use `q8_0` KV on one RX 6900 XT;
+the published 100K route and current canonical candidates keep reasoning enabled.
 
 | Model | Purpose | Context | KV cache | Notes |
 | --- | --- | ---: | --- | --- |
-| Qwen3.6 35B-A3B `UD-IQ3_XXS` | stable q8 route | 131072 | `q8_0` | No-MTP cold 300k-character needle passed; compute profile gave the best long-prefill result. |
-| Qwen3.6 35B-A3B `UD-IQ3_XXS` | MTP q8 route | 102400 | `q8_0` | MTP cold 300k-character needle passed with `parallel=1`, `b512/ub256`; compute profile improved long-prefill speed. |
+| Qwen3.8 27B `UD-IQ3_XXS` | canonical candidate lane | 65536 | `q8_0` | Next evidence candidate (`rx6900xt-qwen38-27b-iq3xxs-64k-q8-mtp`): b512/ub128, built-in draft-MTP n=2 / p-min=0.1, reasoning on, COMPUTE. No evidence is published yet; a metadata-complete rerun must be reviewed before this preset is promoted. |
+| Qwen3.6 35B-A3B `UD-IQ3_XXS` | stable q8 route | 131072 | `q8_0` | No-MTP cold 300k-character needle passed; compute profile gave the best long-prefill result. Seed rows were captured with request-level `disable_thinking`. |
+| Qwen3.6 35B-A3B `UD-IQ3_XXS` | **published MTP q8 route** | 102400 | `q8_0` | Reviewed thinking-on profile passed 2/2 retrieval and 2/2 sustained checks at 100K with `parallel=1`, b512/ub256, 56.5 tok/s median sustained decode, 871 tok/s median prefill, and 92.2% MTP acceptance under ROCm/HIP + COMPUTE. |
 | Qwen3.6 35B-A3B `UD-IQ3_XXS` | Vulkan MTP q8 route | 102400 | `q8_0` | Vulkan 3D_FULL_SCREEN pass loaded and passed a cold 300k-character needle; repeat under `COMPUTE` before treating it as a replacement for HIP guidance. |
 | Qwen3.6 35B-A3B `UD-IQ3_XXS` | short-prompt MTP q8 | 131072 | `q8_0` | Short prompts pass; long prefill OOMs, so do not promote for long-context use. |
 | Qwen3.6 27B `UD-IQ3_XXS` | dense-model q8 route | 65536-102400 | `q8_0` | Loads and runs as a dense 27B lane; current seed rows are short-prompt evidence, with long-context and thinking-on coverage still to add. |
 
-For MTP GGUF models, enable llama.cpp native MTP explicitly:
+For MTP GGUF models, enable llama.cpp native MTP explicitly. The canonical Qwen3.8 27B lane uses a shallow draft:
 
 ```bash
---spec-type draft-mtp --spec-draft-n-max 3 --spec-draft-p-min 0.75
+--spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-p-min 0.1
 ```
+
+The Qwen3.6 35B-A3B seed rows used `n=3`, `p-min=0.75`; sweep draft depth rather than assuming bigger is faster.
 
 Also set `parallel = 1` for 16GB Radeon MTP tests. Router-child defaults can otherwise start with four slots and blow VRAM. Do not claim MTP speedup unless logs or benchmark output show that speculation initialized and was active.
 
 ## Results And Data
 
-Canonical result files live under `data/results/` and follow `data/schema/benchmark-result.schema.json`.
+Canonical result files live under `data/results/` and follow `data/schema/benchmark-result.schema.json`. Reviewed preset and evidence structure:
+
+- `data/presets/` - canonical copyable preset manifests (hardware lane, backend, gfx target, power profile, serving shape, profile, known evidence, caveats)
+- `data/evidence/` - reviewed evidence bundles; only `published` bundles are shown in the site's "tested presets" grid
+- `data/evidence/receipts/` - sanitized public raw high-context profile receipts
+- `data/benchmark-profiles/high-context.json` - the uncached context-fit profile contract
+- `.local/bench/` - ignored raw receipts, retries, and local reviews (never committed)
 
 Validate result JSON:
 
@@ -62,11 +77,32 @@ Validate result JSON:
 python3 scripts/validate_results.py data/results
 ```
 
-Build the static site data:
+Validate preset manifests and evidence bundles:
+
+```bash
+python3 scripts/validate_presets.py data/presets
+python3 scripts/validate_evidence.py data/evidence
+```
+
+Build the static site data (results explorer + preset-first catalogue):
 
 ```bash
 python3 scripts/build_site_data.py
+python3 scripts/build_preset_data.py
 ```
+
+Validate one already-loaded context tier with calibrated uncached retrieval and sustained generation, then review the highest useful tier:
+
+```bash
+# thinking route (reasoning = on): no --disable-thinking flag
+python3 scripts/run_high_context_profile.py --base-url http://127.0.0.1:8088/v1 --model Qwen3.6-35B-A3B-rdna16-131k-q8kv-nomtp --preset rx6900xt-qwen36-35b-a3b-iq3xxs-131k-q8-nomtp --context-tokens 131072 --backend ROCm/HIP --power-profile COMPUTE --gpu-model "AMD Radeon RX 6900 XT" --gfx-target gfx1030
+python3 scripts/review_context_fit.py --preset rx6900xt-qwen36-35b-a3b-iq3xxs-131k-q8-nomtp --input .local/bench/rx6900xt-qwen36-35b-a3b-iq3xxs-131k-q8-nomtp
+```
+
+For a non-thinking route (future experimental presets that deliberately disable
+reasoning), add `--disable-thinking` to the runner; the receipt records the
+request-level template setting. The command above matches the 131K candidate's
+`reasoning = on` route, so it must not pass that flag.
 
 Run a protocol-shaped OpenAI-compatible benchmark against a running llama.cpp server:
 
@@ -91,9 +127,10 @@ bash scripts/report.sh --url http://127.0.0.1:8088 --model Qwen3.6-35B-A3B
 
 - `docs/project-plan.md` - project phases and public-release checklist
 - `docs/benchmark-protocol.md` - prompt sets, context tiers, and promotion levels
+- `docs/preset-evidence-workflow.md` - how a preset becomes published evidence (manual review only)
 - `docs/hardware-lanes.md` - result grouping for RX 6900 XT, RX 9070 XT, and other AMD GPUs
 - `docs/rx-6900-xt-baseline.md` - current tested seed machine
-- `docs/qwen36-profiles.md` - recommended Qwen3.6 27B and 35B-A3B profile matrix
+- `docs/qwen36-profiles.md` - candidate Qwen3.6 27B and 35B-A3B profile matrix
 - `docs/gpu-power-profiles.md` - LACT/amdgpu profile checks and compute-mode comparison plan
 - `docs/local-llama-research.md` - LocalLLaMA and official-reference research notes
 - `docs/fit-matrix.md` - first fit-probe findings
@@ -106,9 +143,12 @@ bash scripts/report.sh --url http://127.0.0.1:8088 --model Qwen3.6-35B-A3B
 ## Verification
 
 ```bash
-python3 -m py_compile scripts/*.py
+python3 -m py_compile scripts/*.py scripts/tests/*.py
 bash -n scripts/*.sh examples/*.sh
 python3 scripts/validate_results.py data/results
+python3 scripts/validate_presets.py data/presets
+python3 scripts/validate_evidence.py data/evidence
 python3 scripts/build_site_data.py
+python3 scripts/build_preset_data.py
 ./scripts/check_repo.sh
 ```

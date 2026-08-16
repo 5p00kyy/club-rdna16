@@ -57,3 +57,12 @@ llama-bench -m "$MODEL" -ngl 99 -fa 1 -ctk q8_0 -ctv q8_0 \
 ```
 
 If a setting is fast only at empty or tiny context, mark it as short-context evidence. Public recommendations need at least one non-empty-context or long-retrieval receipt.
+
+## Preset-First Promotion
+
+Routine benchmark rows live in `data/results/` and stay in the historical explorer.
+A preset only reaches the site's "tested presets" grid after a maintainer promotes
+a reviewed evidence bundle (`data/evidence/`, status `published`). The uncached
+`high-context` profile contract, raw-receipt flow, and manual promotion steps are
+documented in `docs/preset-evidence-workflow.md`. Raw receipts are never committed;
+they stay in the ignored `.local/bench/` tree until sanitized and promoted.

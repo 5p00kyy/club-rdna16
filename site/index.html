@@ -211,6 +211,61 @@
       text-overflow: ellipsis;
     }
 
+    .preset-intro {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: linear-gradient(135deg, #241013 0%, var(--bg2) 48%);
+      padding: 12px;
+      margin-bottom: 14px;
+    }
+
+    .preset-intro-copy {
+      margin: 0 0 10px;
+      color: var(--text-2);
+      font-size: 11px;
+      max-width: 800px;
+    }
+
+    .preset-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 9px;
+    }
+
+    .preset-card {
+      border: 1px solid var(--line-2);
+      border-radius: 5px;
+      overflow: hidden;
+      background: #150d0f;
+    }
+
+    .preset-card-head {
+      padding: 10px;
+      border-bottom: 1px solid var(--line);
+      background: #1b1113;
+    }
+
+    .preset-card-title {
+      margin: 0 0 5px;
+      color: var(--bright);
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.25;
+    }
+
+    .preset-card-body { padding: 10px; }
+    .preset-purpose { color: var(--text-2); margin: 0 0 9px; }
+    .preset-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 9px 0; }
+    .preset-metric { border-left: 2px solid var(--green-2); padding-left: 7px; min-width: 0; }
+    .preset-metric .k { color: var(--text-3); font-size: 9px; text-transform: uppercase; letter-spacing: .04em; }
+    .preset-metric .v { color: var(--bright); font-size: 13px; font-weight: 600; white-space: nowrap; }
+    .preset-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 9px; }
+    .preset-links a { color: var(--green); font-size: 11px; min-height: 30px; display: inline-flex; align-items: center; }
+    .preset-links a + a::before { content: '·'; color: var(--text-3); margin-right: 10px; }
+    .preset-links a:hover { text-decoration: underline; }
+    .preset-caveat { color: var(--text-2); font-size: 11px; margin: 8px 0 0; }
+    .preset-empty { color: var(--text-2); padding: 5px 0; }
+
     .panel {
       border: 1px solid var(--line);
       background: var(--bg2);
@@ -222,7 +277,7 @@
     .toolbar {
       display: grid;
       gap: 7px;
-      grid-template-columns: minmax(240px, 1.4fr) repeat(7, minmax(105px, 1fr)) repeat(2, minmax(105px, 0.8fr));
+      grid-template-columns: minmax(240px, 1.4fr) repeat(8, minmax(105px, 1fr)) repeat(2, minmax(105px, 0.8fr));
     }
 
     input, select {
@@ -602,6 +657,7 @@
       .stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .toolbar { grid-template-columns: 1fr; }
       .meta { white-space: normal; }
+      .preset-metrics { grid-template-columns: 1fr; }
       .results-wrap {
         border: 0;
         background: transparent;
@@ -712,6 +768,7 @@
         <span class="sub">16GB AMD Radeon local LLM benchmarks</span>
       </div>
       <nav>
+        <a href="#presets">presets</a>
         <a href="#results">results</a>
         <a href="#summaries">summaries</a>
         <a href="https://github.com/5p00kyy/club-rdna16/blob/main/docs/benchmark-protocol.md">protocol</a>
@@ -721,6 +778,14 @@
   </header>
 
   <main class="wrap">
+    <section class="preset-intro" id="presets" aria-labelledby="preset-heading">
+      <div class="sec-head">
+        <div class="sec-title"><span class="prompt">$</span><h2 id="preset-heading">tested presets</h2></div>
+        <span class="meta">published evidence only</span>
+      </div>
+      <p class="preset-intro-copy">Start with a recipe we would actually run. Each card carries its hardware lane, backend (ROCm/HIP vs Vulkan), power profile, exact configuration, validated context, and compact evidence. The explorer below remains for comparisons, experiments, and archive provenance.</p>
+      <div class="preset-grid" id="preset-list" aria-live="polite"><div class="preset-empty">Loading preset catalogue…</div></div>
+    </section>
     <div class="hw-bar">
       <div class="hw-label">hardware lane</div>
       <div class="hw-specs">
@@ -781,6 +846,8 @@
         <select id="thinking-filter" aria-controls="results-list"></select>
         <label class="sr-only" for="family-filter">Model family filter</label>
         <select id="family-filter" aria-controls="results-list"></select>
+        <label class="sr-only" for="backend-filter">Backend filter</label>
+        <select id="backend-filter" aria-controls="results-list"></select>
         <label class="sr-only" for="level-filter">Evidence filter</label>
         <select id="level-filter" aria-controls="results-list"></select>
         <label class="sr-only" for="prompt-filter">Prompt set filter</label>
@@ -861,7 +928,10 @@
 
   <script>
     const DATA_URL = 'data/results.json';
+    const PRESET_URL = 'data/presets.json';
+    const GITHUB_BLOB = 'https://github.com/5p00kyy/club-rdna16/blob/main/';
     let allResults = [];
+    let allPresetCards = [];
     let filteredResults = [];
     let visibleResults = [];
     let sortKey = 'decode';
@@ -888,6 +958,12 @@
       .replace(/^AMD\s+(GeForce\s+)?/i, '')
       .replace(/\s+/g, ' ')
       .trim();
+
+    const backendLabel = (item) => {
+      const backend = String(get(item, 'runtime.backend', '') || '').trim();
+      if (!backend) return 'unknown backend';
+      return backend;
+    };
 
     const contextLabel = (tokens) => {
       const value = Number(tokens || 0);
@@ -951,6 +1027,69 @@
       "'": '&#39;'
     })[char]);
 
+    const laneLabel = (lane) => ({
+      '1x-rdna16': '1× RX 6900 XT / 16GB Radeon',
+      '2x-rdna16': '2× RX 6900 XT / 16GB Radeon',
+      'multi-rdna16': '3×/4×+ 16GB Radeon',
+      'other-radeon-16gb': 'other 16GB Radeon',
+      'other-amd': 'other AMD',
+      'unknown': 'unknown lane',
+    })[lane] || String(lane || 'hardware lane');
+
+    const renderPresetCards = () => {
+      const target = document.getElementById('preset-list');
+      const cards = allPresetCards.filter((card) => card.ready_for_default);
+      if (!cards.length) {
+        target.innerHTML = '<div class="preset-empty">No reviewed presets are published yet. Browse the evidence explorer below while the catalogue is refreshed.</div>';
+        return;
+      }
+      target.innerHTML = cards.map((card) => {
+        const preset = card.preset || {};
+        const evidence = (card.published_evidence || [])[0] || {};
+        const context = evidence.context || {};
+        const metrics = (evidence.evidence || {}).metrics || {};
+        const checks = (evidence.evidence || {}).checks || {};
+        const model = preset.model || {};
+        const runtime = preset.runtime || {};
+        const hardware = preset.hardware || {};
+        const actual = context.actual_prompt_tokens || {};
+        const effective = context.server_effective_tokens;
+        const configured = context.server_configured_tokens;
+        const actualText = typeof actual === 'object'
+          ? [actual.retrieval ? formatNumber(actual.retrieval, 0) + ' retrieval' : '', actual.sustained_generation ? formatNumber(actual.sustained_generation, 0) + ' sustained' : ''].filter(Boolean).join(' / ')
+          : formatNumber(actual, 0);
+        const caveat = (evidence.caveats || preset.caveats || [])[0] || '';
+        const evidencePath = (evidence.source_receipts || [])[0];
+        return '<article class="preset-card">' +
+          '<div class="preset-card-head">' +
+            '<h3 class="preset-card-title">' + escapeHtml(preset.title || preset.id || 'preset') + '</h3>' +
+            '<div class="model-tags">' +
+              '<span class="badge tier-recommended">' + escapeHtml(preset.status || 'reviewed') + '</span>' +
+              '<span class="badge green">' + escapeHtml(laneLabel(hardware.lane)) + '</span>' +
+              '<span class="badge engine">' + escapeHtml(runtime.engine || 'runtime') + '</span>' +
+              '<span class="badge blue">' + escapeHtml(runtime.backend || 'backend') + '</span>' +
+              '<span class="badge amber">' + escapeHtml(hardware.power_profile || 'power profile') + '</span>' +
+              '<span class="badge">' + escapeHtml(model.quant || 'quant') + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="preset-card-body">' +
+            '<p class="preset-purpose">' + escapeHtml(preset.purpose || '') + '</p>' +
+            '<div class="preset-metrics">' +
+              '<div class="preset-metric"><div class="k">tested context tier</div><div class="v">' + formatNumber(context.highest_useful_tokens, 0) + '</div></div>' +
+              '<div class="preset-metric"><div class="k">prefill median</div><div class="v">' + formatNumber(metrics.median_prefill_tok_s, 1) + ' tok/s</div></div>' +
+              '<div class="preset-metric"><div class="k">sustained decode</div><div class="v">' + formatNumber(metrics.median_decode_tok_s, 1) + ' tok/s</div></div>' +
+            '</div>' +
+            '<div class="subline">' + escapeHtml(actualText) + ' actual prompt tokens · ' + escapeHtml(String(checks.retrieval_repeats || 0)) + ' retrieval + ' + escapeHtml(String(checks.sustained_generation_repeats || 0)) + ' sustained checks' + (effective ? ' · ' + formatNumber(effective, 0) + ' effective / ' + formatNumber(configured, 0) + ' total server context' : '') + '</div>' +
+            '<div class="preset-links">' +
+              (runtime.preset_file ? '<a href="' + GITHUB_BLOB + encodeURI(runtime.preset_file) + '">view preset</a>' : '') +
+              (evidencePath ? '<a href="' + GITHUB_BLOB + encodeURI(evidencePath) + '">inspect receipt</a>' : '') +
+            '</div>' +
+            (caveat ? '<p class="preset-caveat">' + escapeHtml(caveat) + '</p>' : '') +
+          '</div>' +
+        '</article>';
+      }).join('');
+    };
+
     const fillSelect = (id, label, values) => {
       const select = document.getElementById(id);
       select.innerHTML = '';
@@ -973,6 +1112,7 @@
       get(item, 'model.family', ''),
       get(item, 'model.quant', ''),
       get(item, 'runtime.engine', ''),
+      backendLabel(item),
       hardwareLaneLabel(item),
       gpuFilterLabel(item),
       get(item, 'hardware.gpu_model', ''),
@@ -1251,6 +1391,7 @@
       const spec = document.getElementById('spec-filter').value;
       const thinking = document.getElementById('thinking-filter').value;
       const family = document.getElementById('family-filter').value;
+      const backend = document.getElementById('backend-filter').value;
       const level = document.getElementById('level-filter').value;
       const prompt = document.getElementById('prompt-filter').value;
       const includeArchived = document.getElementById('archived-filter').checked;
@@ -1266,6 +1407,7 @@
         if (spec && specLabel(item) !== spec) return false;
         if (thinking && get(item, 'serving.thinking', 'unknown') !== thinking) return false;
         if (family && get(item, 'model.family', '') !== family) return false;
+        if (backend && backendLabel(item) !== backend) return false;
         if (level && itemLevel !== level) return false;
         if (prompt && get(item, 'benchmark.prompt_set', '') !== prompt) return false;
         return true;
@@ -1340,6 +1482,7 @@
           '</div>' +
           '<div class="model-tags">' +
             '<span class="badge engine">' + escapeHtml(engine) + '</span>' +
+            '<span class="badge amber">' + escapeHtml(backendLabel(item)) + '</span>' +
             '<span class="badge green">' + escapeHtml(lane) + '</span>' +
             '<span class="badge">' + escapeHtml(gpu) + '</span>' +
             '<span class="badge">ctx ' + escapeHtml(contextLabel(context)) + '</span>' +
@@ -1405,12 +1548,24 @@
       if (!response.ok) throw new Error('HTTP ' + response.status + ' loading ' + DATA_URL);
       const data = await response.json();
       allResults = data.results || [];
+      try {
+        const presetResponse = await fetch(PRESET_URL);
+        if (presetResponse.ok) {
+          const presetData = await presetResponse.json();
+          allPresetCards = presetData.presets || [];
+        }
+      } catch (error) {
+        // Preset catalogue is optional; the explorer still works without it.
+        console.warn('preset catalogue unavailable', error);
+      }
+      renderPresetCards();
 
       fillSelect('gpu-filter', 'all hardware', unique(allResults.map((item) => gpuFilterLabel(item))));
       fillSelect('engine-filter', 'all engines', unique(allResults.map((item) => get(item, 'runtime.engine', ''))));
       fillSelect('spec-filter', 'all MTP/spec', unique(allResults.map((item) => specLabel(item))));
       fillSelect('thinking-filter', 'all thinking', unique(allResults.map((item) => get(item, 'serving.thinking', 'unknown'))));
       fillSelect('family-filter', 'all families', unique(allResults.map((item) => get(item, 'model.family', ''))));
+      fillSelect('backend-filter', 'all backends', unique(allResults.map((item) => backendLabel(item))));
       fillSelect('level-filter', 'all levels', unique(allResults.map((item) => get(item, 'promotion_level', ''))));
       fillSelect('prompt-filter', 'all prompts', unique(allResults.map((item) => get(item, 'benchmark.prompt_set', ''))));
 

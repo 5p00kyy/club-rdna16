@@ -8,4 +8,7 @@ __pycache__/
 bench-out/
 results-local/
 artifacts/
+# Local benchmark receipts, retries, and review output. These are deliberately
+# separate from tracked preset/evidence data until a maintainer promotes them.
+.local/bench/
 .DS_Store

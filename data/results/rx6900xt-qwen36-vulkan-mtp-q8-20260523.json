@@ -15,6 +15,8 @@
         "gpu_count": 1,
         "gpu_model": "AMD Radeon RX 6900 XT",
         "vram_per_gpu_gb": 16.0,
+        "power_profile": "3D_FULL_SCREEN",
+        "architecture_target": "unknown",
         "driver": "Vulkan RADV, Mesa 26.2.0-devel, amdgpu",
         "cpu": "Intel Core i9-10900K",
         "host_ram_gb": 64.0,
@@ -23,6 +25,8 @@
       },
       "runtime": {
         "engine": "llama.cpp",
+        "backend": "Vulkan",
+        "backend_target": "unknown",
         "version": "llama.cpp 9293",
         "commit": "1acee6bf8",
         "notes": "Sidecar Vulkan build from the same llama.cpp commit; GGML_VULKAN=ON, GGML_HIP=OFF, local user-space SPIRV-Headers prefix."
@@ -86,6 +90,8 @@
         "gpu_count": 1,
         "gpu_model": "AMD Radeon RX 6900 XT",
         "vram_per_gpu_gb": 16.0,
+        "power_profile": "3D_FULL_SCREEN",
+        "architecture_target": "unknown",
         "driver": "Vulkan RADV, Mesa 26.2.0-devel, amdgpu",
         "cpu": "Intel Core i9-10900K",
         "host_ram_gb": 64.0,
@@ -94,6 +100,8 @@
       },
       "runtime": {
         "engine": "llama.cpp",
+        "backend": "Vulkan",
+        "backend_target": "unknown",
         "version": "llama.cpp 9293",
         "commit": "1acee6bf8",
         "notes": "Sidecar Vulkan build from the same llama.cpp commit; GGML_VULKAN=ON, GGML_HIP=OFF, local user-space SPIRV-Headers prefix."
@@ -157,6 +165,8 @@
         "gpu_count": 1,
         "gpu_model": "AMD Radeon RX 6900 XT",
         "vram_per_gpu_gb": 16.0,
+        "power_profile": "3D_FULL_SCREEN",
+        "architecture_target": "unknown",
         "driver": "Vulkan RADV, Mesa 26.2.0-devel, amdgpu",
         "cpu": "Intel Core i9-10900K",
         "host_ram_gb": 64.0,
@@ -165,6 +175,8 @@
       },
       "runtime": {
         "engine": "llama.cpp",
+        "backend": "Vulkan",
+        "backend_target": "unknown",
         "version": "llama.cpp 9293",
         "commit": "1acee6bf8",
         "notes": "Sidecar Vulkan build from the same llama.cpp commit; GGML_VULKAN=ON, GGML_HIP=OFF, local user-space SPIRV-Headers prefix."

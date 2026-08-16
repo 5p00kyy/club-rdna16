@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0",
+  "id": "rx6900xt-qwen36-35b-a3b-iq3xxs-100k-q8-mtp",
+  "title": "Qwen3.6 35B-A3B IQ3_XXS 100K q8 MTP on one RX 6900 XT (ROCm/HIP, COMPUTE)",
+  "status": "alternative",
+  "provenance": "seed-tested",
+  "purpose": "100K q8 MTP route with built-in draft-mtp n=3 at b512/ub256 on one RX 6900 XT via ROCm/HIP.",
+  "hardware": {
+    "lane": "1x-rdna16",
+    "gpu_count": 1,
+    "gpu_model": "AMD Radeon RX 6900 XT",
+    "architecture_family": "RDNA2",
+    "architecture_target": "gfx1030",
+    "vram_per_gpu_gb": 16,
+    "power_profile": "COMPUTE"
+  },
+  "runtime": {
+    "engine": "llama.cpp",
+    "backend": "ROCm/HIP",
+    "backend_target": "gfx1030",
+    "preset_file": "examples/llamacpp-rx6900xt-qwen36-35b-a3b.ini",
+    "preset_section": "Qwen3.6-35B-A3B-rdna16-100k-q8kv-mtp"
+  },
+  "model": {
+    "id": "Qwen3.6-35B-A3B-rdna16-100k-q8kv-mtp",
+    "family": "Qwen3.6",
+    "architecture": "moe",
+    "parameter_class": "35B-A3B",
+    "quant": "UD-IQ3_XXS",
+    "source": "unsloth Qwen3.6 MTP GGUF"
+  },
+  "serving": {
+    "kv_cache_k": "q8_0",
+    "kv_cache_v": "q8_0",
+    "batch_size": 512,
+    "ubatch_size": 256,
+    "gpu_layers": 99,
+    "parallel": 1,
+    "speculation": "draft-mtp",
+    "speculation_n": 3,
+    "thinking": "on"
+  },
+  "profile": "data/benchmark-profiles/high-context.json",
+  "context": {
+    "target_tokens": 102400,
+    "minimum_useful_tokens": 65536
+  },
+  "known_evidence": [
+    "data/evidence/rx6900xt-qwen36-35b-a3b-iq3xxs-100k-q8-mtp-102400.json",
+    "data/results/rx6900xt-qwen36-compute-q8-short-20260523.json",
+    "data/long-context/rx6900xt-qwen36-35b-a3b-100k-q8-mtp-needle300k-compute-nothink.json"
+  ],
+  "caveats": [
+    "Evidence is RX 6900 XT-specific (gfx1030, ROCm/HIP); do not generalize to RX 9070 XT or other 16GB Radeon cards.",
+    "q8_0 KV is the recommendation floor for this preset; lower KV variants are exploratory only.",
+    "Historical seed rows under known_evidence were captured with request-level disable_thinking; the published 102400-token bundle separately validates this preset with thinking enabled.",
+    "The published profile used a 1024-token retrieval allowance so hidden reasoning could finish before the required client-visible exact answer; its preceding 512-token diagnostic is disclosed with the evidence."
+  ]
+}
