@@ -8,7 +8,10 @@ set -euo pipefail
 
 LLAMA_CPP_DIR="${LLAMA_CPP_DIR:-$HOME/llama.cpp}"
 LLAMA_CPP_REPO="${LLAMA_CPP_REPO:-https://github.com/ggml-org/llama.cpp.git}"
-LLAMA_CPP_REF="${LLAMA_CPP_REF:-main}"
+# Leave this unset to follow the upstream repository's advertised default
+# branch. llama.cpp currently uses master, but hard-coding that would recreate
+# the same failure if the upstream default changes again.
+LLAMA_CPP_REF="${LLAMA_CPP_REF:-}"
 AMDGPU_TARGETS="${AMDGPU_TARGETS:-gfx1030}"
 ROCM_PATH="${ROCM_PATH:-/opt/rocm}"
 INSTALL_PREFIX="${INSTALL_PREFIX:-}"
@@ -29,7 +32,7 @@ Usage: scripts/update-llama.sh [--fresh] [--ref <git-ref>] [--dir <path>] [--ins
 Environment overrides:
   LLAMA_CPP_DIR     source/build directory, default ~/llama.cpp
   LLAMA_CPP_REPO    llama.cpp remote, default ggml-org/llama.cpp
-  LLAMA_CPP_REF     commit/ref to checkout, default main
+  LLAMA_CPP_REF     commit/ref to checkout; defaults to the upstream default branch
   AMDGPU_TARGETS    HIP targets, default gfx1030 for RX 6900 XT
   ROCM_PATH         ROCm root, default /opt/rocm
   JOBS              build jobs, default 12
@@ -92,7 +95,16 @@ else
   git -C "$LLAMA_CPP_DIR" remote set-url origin "$LLAMA_CPP_REPO"
 fi
 
-git -C "$LLAMA_CPP_DIR" fetch --tags origin main
+git -C "$LLAMA_CPP_DIR" fetch --tags origin
+
+if [[ -z "$LLAMA_CPP_REF" ]]; then
+  LLAMA_CPP_REF="$(git -C "$LLAMA_CPP_DIR" symbolic-ref --quiet --short refs/remotes/origin/HEAD || true)"
+  if [[ -z "$LLAMA_CPP_REF" ]]; then
+    echo "Could not determine the default branch from origin/HEAD; pass --ref explicitly." >&2
+    exit 1
+  fi
+fi
+
 git -C "$LLAMA_CPP_DIR" checkout --detach "$LLAMA_CPP_REF"
 
 echo "Building llama.cpp with GGML_HIP=ON AMDGPU_TARGETS=$AMDGPU_TARGETS"
